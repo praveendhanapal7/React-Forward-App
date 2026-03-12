@@ -91,7 +91,7 @@ const [brandnames, setBrandNames] = useState([]);
        setBrandName(await brandResponse.text());
 
         setLeads(leadsData);
-        setClientName(brandName);
+       
       } catch (error) {
         console.error("Error loading data:", error);
       }
@@ -164,7 +164,7 @@ const [brandnames, setBrandNames] = useState([]);
       const brands = await response.json();
       console.log("Brand names:", brands);
 
-      setBrandNames(`Team of ${brands}`);
+      setBrandNames(brands);
 
     } catch (error) {
       console.error("Error loading brands:", error);
@@ -184,7 +184,7 @@ const [brandnames, setBrandNames] = useState([]);
         >
           Hii {user.name}
           <span style={{ fontSize: "15px", opacity: "70%" }}>
-            {brandName}
+         {brandnames}
           </span>
         </h2>
 
