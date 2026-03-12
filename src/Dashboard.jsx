@@ -184,7 +184,7 @@ const [brandnames, setBrandNames] = useState([]);
         >
           Hii {user.name}
           <span style={{ fontSize: "15px", opacity: "70%" }}>
-         {brandname}
+         {brandName}
           </span>
         </h2>
 
