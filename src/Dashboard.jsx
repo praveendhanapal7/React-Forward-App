@@ -302,9 +302,9 @@ const [brandnames, setBrandNames] = useState([]);
                   <tr key={lead.phoneNumber}>
                     <td>{lead.phoneNumber}</td>
                     <td>{lead.requirements}</td>
-                       {user.accountType === "Agency Staff" && (
+                       {user.secretKey === "forward@2025" && (
                       <td>{lead.clientName}</td>)}
-                    <td>{ user.accountType === "Agency Staff" ? "Forward Agnecy" : lead.addedBy}</td>
+                    <td>{lead.addedBy}</td>
                     <td>{lead.enquiryEntry}</td>
                   </tr>
                 ))}
