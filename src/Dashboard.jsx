@@ -88,7 +88,7 @@ const [brandnames, setBrandNames] = useState([]);
         const brandResponse = await brandPromise;
 
         const leadsData = await leadsResponse.json();
-       setBrandName(await brandResponse.text());
+       setBrandName(` Team of ${await brandResponse.text()}`);
 
         setLeads(leadsData);
        
