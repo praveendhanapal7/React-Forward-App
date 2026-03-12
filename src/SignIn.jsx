@@ -27,7 +27,7 @@ function SignIn() {
 
       console.log("trying");
 
-      const auth = await fetch("http://localhost:8090/user/auth/login", {
+      const auth = await fetch("https://forwardbackendserver-production.up.railway.app/user/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -25,8 +25,8 @@ const [brandnames, setBrandNames] = useState([]);
 
       const leadsURL =
         user.accountType === "Agency Staff"
-          ? "http://localhost:8090/get/leads/all"
-          : "http://localhost:8090/get/leads/brandname";
+          ? "https://forwardbackendserver-production.up.railway.app/get/leads/all"
+          : "https://forwardbackendserver-production.up.railway.app/get/leads/brandname";
 
 // start
 
@@ -40,7 +40,7 @@ const [brandnames, setBrandNames] = useState([]);
 //           body: JSON.stringify(payload),
 //         });
 
-//         const brandPromise = fetch("http://localhost:8090/get/brandname", {
+//         const brandPromise = fetch("https://forwardbackendserver-production.up.railway.app/get/brandname", {
 //           method: "POST",
 //           headers: {
 //             "Content-Type": "application/json",
@@ -75,7 +75,7 @@ const [brandnames, setBrandNames] = useState([]);
           body: JSON.stringify(payload),
         });
 
-        const brandPromise = fetch("http://localhost:8090/get/brandname", {
+        const brandPromise = fetch("https://forwardbackendserver-production.up.railway.app/get/brandname", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -122,7 +122,7 @@ const [brandnames, setBrandNames] = useState([]);
 
 //POSTING leads from backend
     try {
-      await fetch("http://localhost:8090/add/leads", {
+      await fetch("https://forwardbackendserver-production.up.railway.app/add/leads", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -152,7 +152,7 @@ const [brandnames, setBrandNames] = useState([]);
   const loadBrands = async () => {
     try {
 
-      const response = await fetch("http://localhost:8090/get/all/brands", {
+      const response = await fetch("https://forwardbackendserver-production.up.railway.app/get/all/brands", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
