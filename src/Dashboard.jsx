@@ -91,6 +91,8 @@ const [brandnames, setBrandNames] = useState([]);
         const leadsData = await leadsResponse.json();
        setBrandName(` (Team of ${await brandResponse.text()})`);
 
+       console.log(leadsData);
+
         setLeads(leadsData);
        
       } catch (error) {
