@@ -68,7 +68,8 @@ const [brandnames, setBrandNames] = useState([]);
 
 
       try {
-        const leadsPromise = fetch(leadsURL, {
+
+        const brandPromise = fetch("https://forwardbackendserver-production.up.railway.app/get/brandname", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -76,7 +77,7 @@ const [brandnames, setBrandNames] = useState([]);
           body: JSON.stringify(payload),
         });
 
-        const brandPromise = fetch("https://forwardbackendserver-production.up.railway.app/get/brandname", {
+         const leadsPromise = fetch(leadsURL, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -302,7 +303,7 @@ const [brandnames, setBrandNames] = useState([]);
                   <tr key={lead.phoneNumber}>
                     <td>{lead.phoneNumber}</td>
                     <td>{lead.requirements}</td>
-                       {user.secretKey === "forward@2025" && (
+                       {user.secretKey === "forward@2025" && (   
                       <td>{lead.clientName}</td>)}
                     <td>{lead.addedBy}</td>
                     <td>{lead.enquiryEntry}</td>
