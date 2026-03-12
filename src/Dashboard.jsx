@@ -5,7 +5,7 @@ import { useLocation } from "react-router-dom";
 function Dashboard() {
   const location = useLocation();
   const user = location.state;
-const [brandName , setBrandName]=useState("Loading");
+const [brandName , setBrandName]=useState(" Loading");
   const [leads, setLeads] = useState([]);
   const [clientName, setClientName] = useState("");
   const [loadingLeads, setLoadingLeads] = useState(true);
@@ -88,7 +88,7 @@ const [brandnames, setBrandNames] = useState([]);
         const brandResponse = await brandPromise;
 
         const leadsData = await leadsResponse.json();
-       setBrandName(` Team of ${await brandResponse.text()}`);
+       setBrandName(` (Team of ${await brandResponse.text()})`);
 
         setLeads(leadsData);
        
