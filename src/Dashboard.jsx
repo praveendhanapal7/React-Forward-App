@@ -5,7 +5,7 @@ import { useLocation } from "react-router-dom";
 function Dashboard() {
   const location = useLocation();
   const user = location.state;
-const [brandName , setBrandName]=useState(" Loading...");
+const [brandName , setBrandName]=useState("Loading");
   const [leads, setLeads] = useState([]);
   const [clientName, setClientName] = useState("");
   const [loadingLeads, setLoadingLeads] = useState(true);
@@ -68,8 +68,7 @@ const [brandnames, setBrandNames] = useState([]);
 
 
       try {
-
-        const brandPromise = fetch("https://forwardbackendserver-production.up.railway.app/get/brandname", {
+        const leadsPromise = fetch(leadsURL, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -77,7 +76,7 @@ const [brandnames, setBrandNames] = useState([]);
           body: JSON.stringify(payload),
         });
 
-         const leadsPromise = fetch(leadsURL, {
+        const brandPromise = fetch("https://forwardbackendserver-production.up.railway.app/get/brandname", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -89,9 +88,7 @@ const [brandnames, setBrandNames] = useState([]);
         const brandResponse = await brandPromise;
 
         const leadsData = await leadsResponse.json();
-       setBrandName(` (Team of ${await brandResponse.text()})`);
-
-       console.log(leadsData);
+       setBrandName(` Team of ${await brandResponse.text()}`);
 
         setLeads(leadsData);
        
@@ -187,7 +184,6 @@ const [brandnames, setBrandNames] = useState([]);
         >
           Hii {user.name}
           <span style={{ fontSize: "15px", opacity: "70%" }}>
-            {console.log("This is ",brandName)}
          {brandName}
           </span>
         </h2>
@@ -305,9 +301,9 @@ const [brandnames, setBrandNames] = useState([]);
                   <tr key={lead.phoneNumber}>
                     <td>{lead.phoneNumber}</td>
                     <td>{lead.requirements}</td>
-                       {user.secretKey === "forward@2025" && (   
+                       {user.accountType === "Agency Staff" && (
                       <td>{lead.clientName}</td>)}
-                    <td>{lead.addedBy}</td>
+                    <td>{ user.accountType === "Agency Staff" ? "Forward Agnecy" : lead.addedBy}</td>
                     <td>{lead.enquiryEntry}</td>
                   </tr>
                 ))}
