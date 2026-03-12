@@ -5,7 +5,7 @@ import { useLocation } from "react-router-dom";
 function Dashboard() {
   const location = useLocation();
   const user = location.state;
-
+const [brandName , setBrandName]=useState("Loading");
   const [leads, setLeads] = useState([]);
   const [clientName, setClientName] = useState("");
   const [loadingLeads, setLoadingLeads] = useState(true);
@@ -63,6 +63,7 @@ const [brandnames, setBrandNames] = useState([]);
 // },5000)
 
 
+ 
 
 
 
@@ -87,7 +88,7 @@ const [brandnames, setBrandNames] = useState([]);
         const brandResponse = await brandPromise;
 
         const leadsData = await leadsResponse.json();
-        const brandName = await brandResponse.text();
+       setBrandName(await brandResponse.text());
 
         setLeads(leadsData);
         setClientName(brandName);
@@ -163,7 +164,7 @@ const [brandnames, setBrandNames] = useState([]);
       const brands = await response.json();
       console.log("Brand names:", brands);
 
-      setBrandNames(brands);
+      setBrandNames(`Team of ${brands}`);
 
     } catch (error) {
       console.error("Error loading brands:", error);
@@ -183,7 +184,7 @@ const [brandnames, setBrandNames] = useState([]);
         >
           Hii {user.name}
           <span style={{ fontSize: "15px", opacity: "70%" }}>
-            {clientName.length > 1 ? ` (Team of ${clientName})` : "Loading..."}
+            {brandName}
           </span>
         </h2>
 
