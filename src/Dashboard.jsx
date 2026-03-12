@@ -5,18 +5,17 @@ import { useLocation } from "react-router-dom";
 function Dashboard() {
   const location = useLocation();
   const user = location.state;
-const [brandName , setBrandName]=useState("Loading");
+  let selectedClient;
   const [leads, setLeads] = useState([]);
   const [clientName, setClientName] = useState("");
   const [loadingLeads, setLoadingLeads] = useState(true);
 
+  const [brandName, setBrandName] = useState("");
   const [leadNumber, setLeadNumber] = useState("");
   const [requirement, setRequirement] = useState("");
   const [status, setStatus] = useState("");
   const [enquiryButton, setEnquiryButton] = useState("Add Lead");
-const [brandnames, setBrandNames] = useState([]);
-
-
+  const [brandnames, setBrandnames] = useState([]);
   useEffect(() => {
     const loadData = async () => {
       const payload = {
@@ -25,47 +24,42 @@ const [brandnames, setBrandNames] = useState([]);
 
       const leadsURL =
         user.accountType === "Agency Staff"
-          ? "https://forwardbackendserver-production.up.railway.app/get/leads/all"
-          : "https://forwardbackendserver-production.up.railway.app/get/leads/brandname";
+          ? "http://localhost:8090/get/leads/all"
+          : "http://localhost:8090/get/leads/brandname";
 
-// start
+      // start
 
-// setInterval(async () => {
-//       try {
-//         const leadsPromise = fetch(leadsURL, {
-//           method: "POST",
-//           headers: {
-//             "Content-Type": "application/json",
-//           },
-//           body: JSON.stringify(payload),
-//         });
+      // setInterval(async () => {
+      //       try {
+      //         const leadsPromise = fetch(leadsURL, {
+      //           method: "POST",
+      //           headers: {
+      //             "Content-Type": "application/json",
+      //           },
+      //           body: JSON.stringify(payload),
+      //         });
 
-//         const brandPromise = fetch("https://forwardbackendserver-production.up.railway.app/get/brandname", {
-//           method: "POST",
-//           headers: {
-//             "Content-Type": "application/json",
-//           },
-//           body: JSON.stringify(payload),
-//         });
+      //         const brandPromise = fetch("http://localhost:8090/get/brandname", {
+      //           method: "POST",
+      //           headers: {
+      //             "Content-Type": "application/json",
+      //           },
+      //           body: JSON.stringify(payload),
+      //         });
 
-//         const leadsResponse = await leadsPromise;
-//         const brandResponse = await brandPromise;
+      //         const leadsResponse = await leadsPromise;
+      //         const brandResponse = await brandPromise;
 
-//         const leadsData = await leadsResponse.json();
-//         const brandName = await brandResponse.text();
+      //         const leadsData = await leadsResponse.json();
+      //         const brandName = await brandResponse.text();
 
-//         setLeads(leadsData);
-//         setClientName(brandName);
-//       } catch (error) {
-//         console.error("Error loading data:", error);
-//       }
+      //         setLeads(leadsData);
+      //         setClientName(brandName);
+      //       } catch (error) {
+      //         console.error("Error loading data:", error);
+      //       }
 
-// },5000)
-
-
- 
-
-
+      // },5000)
 
       try {
         const leadsPromise = fetch(leadsURL, {
@@ -76,7 +70,7 @@ const [brandnames, setBrandNames] = useState([]);
           body: JSON.stringify(payload),
         });
 
-        const brandPromise = fetch("https://forwardbackendserver-production.up.railway.app/get/brandname", {
+        const brandPromise = fetch("http://localhost:8090/get/brandname", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -88,17 +82,15 @@ const [brandnames, setBrandNames] = useState([]);
         const brandResponse = await brandPromise;
 
         const leadsData = await leadsResponse.json();
-       setBrandName(` Team of ${await brandResponse.text()}`);
+      setBrandName(await brandResponse.text());
 
         setLeads(leadsData);
-       
+        // setClientName(brandName);
       } catch (error) {
         console.error("Error loading data:", error);
       }
 
-
-
-      //end 
+      //end
 
       setLoadingLeads(false);
     };
@@ -111,19 +103,32 @@ const [brandnames, setBrandNames] = useState([]);
     event.preventDefault();
     setEnquiryButton("Loading...");
 
+    console.log("brans name ", brandnames[0])
+
+    if (clientName === "") 
+  selectedClient = brandnames[0];
+    else
+      selectedClient = clientName;
     if (!leadNumber.trim() || !requirement.trim()) return;
 
-   const newLead = {
-  phoneNumber: leadNumber,
-  requirements: requirement,
-  clientName: clientName,
-  enquiryEntry:new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
-  addedBy: user.name,
-};
 
-//POSTING leads from backend
+    console.log("Hello yaar",selectedClient);
+
+    const newLead = {
+      phoneNumber: leadNumber,
+      requirements: requirement,
+      clientName: selectedClient,
+      enquiryEntry: new Date().toLocaleString("en-IN", {
+        timeZone: "Asia/Kolkata",
+      }),
+      addedBy: user.secretKey!=="forward@2025" ? user.name : `${user.name} (Agency Member)`
+    };
+
+console.log("this is client : "+clientName);
+
+    //POSTING leads from backend
     try {
-      await fetch("https://forwardbackendserver-production.up.railway.app/add/leads", {
+      await fetch("http://localhost:8090/add/leads", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -146,34 +151,29 @@ const [brandnames, setBrandNames] = useState([]);
 
 
 
- useEffect(() => {
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const response = await fetch("http://localhost:8090/get/all/brands", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ secretKey: user.secretKey }),
+        });
 
-  if (user.accountType !== "Agency Staff") return;
+        const brands = await response.json();
+        setBrandnames(brands);
 
-  const loadBrands = async () => {
-    try {
-
-      const response = await fetch("https://forwardbackendserver-production.up.railway.app/get/all/brands", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ secretKey: user.secretKey }),
-      });
-
-      const brands = await response.json();
-      console.log("Brand names:", brands);
-
-      setBrandNames(brands);
-
-    } catch (error) {
-      console.error("Error loading brands:", error);
+        // console.log("Brand names:", brands);
+      } catch (error) {
+        console.error("Error loading data:", error);
+      }
     }
-  };
 
-  loadBrands();
+    loadData();
+  }, [user.secretKey]);
 
-}, [user.secretKey, user.accountType]);
   return (
     <section className="PageShell">
       <div className="PageHero">
@@ -184,7 +184,7 @@ const [brandnames, setBrandNames] = useState([]);
         >
           Hii {user.name}
           <span style={{ fontSize: "15px", opacity: "70%" }}>
-         {brandName}
+            {brandName.length > 1 ? ` (Team of ${brandName})` : "Loading..."}
           </span>
         </h2>
 
@@ -232,20 +232,18 @@ const [brandnames, setBrandNames] = useState([]);
               <label>Client Name</label>
 
               <select
+                onChange={(e) => {
+                setClientName(e.target.value)
+                }}
                 value={clientName}
-                onChange={(e) => setClientName(e.target.value)}
               >
-                {console.log(brandnames)}
 
-           {user.accountType === "Agency Staff" &&
-  brandnames.map((brand) => (
-    <option key={brand} value={brand}>
-      {brand}
-    </option>
-  ))
-}
-                
-
+                {user.accountType === "Agency Staff" &&
+                  brandnames.map((brands, index) => (
+                    <option key={index} value={brands}>
+                      {brands}
+                    </option>
+                  ))}
               </select>
             </div>
           )}
@@ -289,8 +287,7 @@ const [brandnames, setBrandNames] = useState([]);
                 <tr>
                   <th>Lead Number</th>
                   <th>Requirement</th>
-                     {user.accountType === "Agency Staff" && (
-                   <th>Brand Name</th>)}
+                  {user.accountType === "Agency Staff" && <th>Brand Name</th>}
                   <th>Added By</th>
                   <th>Entry Time</th>
                 </tr>
@@ -301,9 +298,10 @@ const [brandnames, setBrandNames] = useState([]);
                   <tr key={lead.phoneNumber}>
                     <td>{lead.phoneNumber}</td>
                     <td>{lead.requirements}</td>
-                       {user.accountType === "Agency Staff" && (
-                      <td>{lead.clientName}</td>)}
-                    <td>{ user.accountType === "Agency Staff" ? "Forward Agnecy" : lead.addedBy}</td>
+                    {user.accountType === "Agency Staff" && (
+                      <td>{lead.clientName}</td>
+                    )}
+                    <td>{lead.addedBy}</td>
                     <td>{lead.enquiryEntry}</td>
                   </tr>
                 ))}
