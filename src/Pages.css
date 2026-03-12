@@ -1,0 +1,384 @@
+.PageShell {
+  padding: 56px 50px 72px;
+  background: #ffffff;
+}
+
+.PageHero {
+  border: 1px solid #f0dede;
+  border-radius: 16px;
+  padding: 30px;
+  background: linear-gradient(135deg, #fff7f7 0%, #ffffff 55%, #fff3f3 100%);
+  display: flex;
+  flex-direction: column;
+}
+
+.PageTag {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #ce050d;
+}
+
+.PageTitle {
+  margin: 0;
+  font-size: 44px;
+  line-height: 1.1;
+}
+
+.PageLead {
+  margin: 14px 0 0;
+  max-width: 840px;
+  font-size: 18px;
+  line-height: 1.65;
+  color: #333333;
+}
+
+.PageSection {
+  margin-top: 30px;
+}
+
+.PageSectionTitle {
+  margin: 0 0 14px;
+  font-size: 30px;
+}
+
+.NarrativeBlock {
+  display: grid;
+  gap: 12px;
+}
+
+.NarrativeBlock p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.75;
+  color: #3e3e3e;
+}
+
+.PageGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.PageGrid2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.InfoCard {
+  border: 1px solid #eadcdc;
+  border-radius: 12px;
+  padding: 18px;
+  background: #fff;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.InfoCard:hover {
+  transform: translateY(-3px);
+  border-color: #ce050d;
+  box-shadow: 0 10px 20px rgba(206, 5, 13, 0.12);
+}
+
+.InfoCard h3 {
+  margin: 0 0 8px;
+  font-size: 21px;
+}
+
+.InfoCard p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #494949;
+}
+
+.IconTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.CardIcon {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: #ce050d;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.HighlightCard {
+  background: linear-gradient(140deg, #fff7f7 0%, #ffffff 100%);
+}
+
+.FeatureList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.FeatureList li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 15px;
+  color: #3e3e3e;
+  line-height: 1.6;
+}
+
+.FeatureList li svg {
+  color: #ce050d;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.StatStrip {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.StatBox {
+  border: 1px solid #e8d8d8;
+  border-radius: 12px;
+  background: #fff;
+  padding: 14px 12px;
+  text-align: center;
+}
+
+.StatBox h4 {
+  margin: 0;
+  font-size: 24px;
+  color: #ce050d;
+}
+
+.StatBox p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #555;
+}
+
+.InlineList {
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.InlineList li {
+  border: 1px solid #e5d4d4;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 13px;
+  background: #fff;
+}
+
+.BlogCard .Meta {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: #ce050d;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.BlogCard h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+}
+
+.BlogCard a {
+  display: inline-block;
+  margin-top: 12px;
+  color: #ce050d;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.SignInWrap {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 18px;
+}
+
+.DetailsLayout {
+  display: grid;
+  grid-template-columns: 0.95fr 1.2fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.DetailsLeft {
+  position: sticky;
+  top: 112px;
+}
+
+.DetailsRight {
+  width: 100%;
+}
+
+.SignInForm {
+  border: 1px solid #eadcdc;
+  border-radius: 12px;
+  padding: 18px;
+  background: #fff;
+}
+
+.Field {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.Field label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #222;
+}
+
+.Field input {
+  height: 44px;
+  border-radius: 10px;
+  border: 1px solid #dbc9c9;
+  padding: 0 12px;
+  font-size: 14px;
+}
+
+.Field input:focus {
+  outline: none;
+  border-color: #ce050d;
+}
+
+.PrimaryBtn {
+  height: 48px;
+  width: 100%;
+  border: 1px solid #ce050d;
+  border-radius: 10px;
+  background: #ce050d;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.PrimaryBtn:hover {
+  background: #b6020a;
+}
+
+.MutedText {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: #666;
+  text-align: center;
+}
+
+@media (max-width: 1024px) {
+  .PageShell {
+    padding: 46px 28px 62px;
+  }
+
+  .PageTitle {
+    font-size: 36px;
+  }
+
+  .PageGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .StatStrip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .SignInWrap {
+    grid-template-columns: 1fr;
+  }
+
+  .DetailsLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .DetailsLeft {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .PageShell {
+    padding: 40px 20px 52px;
+  }
+
+  .PageHero {
+    padding: 20px 16px;
+  }
+
+  .PageTitle {
+    font-size: 30px;
+  }
+
+  .PageLead {
+    font-size: 16px;
+  }
+
+  .PageSectionTitle {
+    font-size: 24px;
+  }
+
+  .PageGrid,
+  .PageGrid2,
+  .StatStrip {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+.Field select {
+  height: 44px;
+  border-radius: 10px;
+  border: 1px solid #dbc9c9;
+  padding: 0 12px;
+  font-size: 14px;
+  background: #fff;
+}
+
+.Field select:focus {
+  outline: none;
+  border-color: #ce050d;
+}
+
+.LeadTableWrap {
+  overflow-x: auto;
+}
+
+.LeadTable {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 680px;
+}
+
+.LeadTable th,
+.LeadTable td {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid #f0dfdf;
+  font-size: 14px;
+}
+
+.LeadTable th {
+  color: #ce050d;
+  font-weight: 700;
+}

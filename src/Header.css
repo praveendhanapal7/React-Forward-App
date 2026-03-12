@@ -1,0 +1,239 @@
+.HeaderContainer {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 12px 50px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid #efe3e3;
+  height: fit-content;
+  max-height: fit-content;
+}
+
+
+.LogoLink {
+  display: flex;
+  align-items: center;
+}
+
+.LogoImage {
+  width: 180px;
+}
+
+.HeaderNav {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  max-width: max-content;
+  min-width: max-content;
+}
+
+.HeaderUl {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.HeaderUl li a {
+  text-decoration: none;
+  color: #191919;
+  font-size: 16px;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.HeaderUl li a:hover,
+.HeaderUl li a.active {
+  color: #ce050d;
+}
+
+.ButtonsContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.HeaderButton {
+  padding: 18px 32px;
+  border: 1px solid black;
+  height: 45px;
+  border-radius: 10px;
+  font-size: 17px;
+  letter-spacing: 0.3px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: #ffffff;
+  color: #1b1b1b;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.HeaderButton::after {
+  content: "";
+  background-color: black;
+  position: absolute;
+  z-index: -1;
+  width: 0px;
+  height: 100%;
+
+  transition: all 0.2s linear;
+  left: 0px;
+  top: 0px;
+}
+
+.HeaderButton:hover {
+  border-color: black;
+  color: #ffffff;
+}
+
+.HeaderButton:hover::after {
+  width: 100%;
+}
+
+.HeaderButton2 {
+  padding: 18px 35px;
+  border: 1px solid #ce050d;
+  border-radius: 10px;
+  font-size: 17px;
+  letter-spacing: 0.3px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ce050d;
+  color: white;
+  z-index: 1;
+  height: 45px;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.HeaderButton2::after {
+  content: "";
+  background-color: white;
+  position: absolute;
+  width: 0%;
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.3s ease;
+  left: 0;
+  top: 0;
+  z-index: -1;
+}
+
+.HeaderButton2:hover::after {
+  width: 100%;
+}
+
+.HeaderButton2:hover {
+  color: #ce050d;
+}
+
+.MenuToggle {
+  display: none;
+  width: 42px;
+  height: 42px;
+  border: 1px solid #e3d5d5;
+  background: #ffffff;
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 24px;
+  color: #1a1a1a;
+}
+
+@media (max-width: 1100px) {
+  .HeaderContainer {
+    padding: 12px 24px;
+  }
+
+  .HeaderUl {
+    gap: 20px;
+  }
+
+  .HeaderButton,
+  .HeaderButton2 {
+    padding: 0 18px;
+  }
+}
+
+@media (max-width: 860px) {
+  .HeaderContainer {
+    padding: 10px 16px;
+  }
+
+  .LogoImage {
+    /* height: 72px; */
+  }
+
+  .MenuToggle {
+    display: inline-flex;
+  }
+
+  .HeaderNav {
+    position: absolute;
+    right: 16px;
+    right: 16px;
+    top: calc(100% + 0px);
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+    padding: 18px;
+    border-radius: 14px;
+    background: #ffffff;
+    border: 1px solid #efe2e2;
+    box-shadow: 0 20px 40px rgba(16, 11, 11, 0.12);
+  }
+
+  .HeaderNav.HeaderNavOpen {
+    display: flex;
+  }
+
+  .HeaderUl {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .HeaderUl li a {
+    font-size: 17px;
+  }
+
+  .ButtonsContainer {
+    width: 100%;
+    justify-content: flex-start;
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .ButtonsContainer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .HeaderButton,
+  .HeaderButton2 {
+    width: 100%;
+  }
+}
+
+
+.HeaderActionLink {
+  text-decoration: none;
+}
