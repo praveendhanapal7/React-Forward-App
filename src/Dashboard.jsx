@@ -25,7 +25,7 @@ function Dashboard() {
           secretKey:user.secretKey
         };
 
-        const response = await fetch("http://localhost:8010/get/leads/all", {
+        const response = await fetch("https://forwardbackendserver-production.up.railway.app/get/leads/all", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -77,7 +77,7 @@ function Dashboard() {
 
     //POSTING leads from backend
     try {
-      await fetch("http://localhost:8010/add/leads", {
+      await fetch("https://forwardbackendserver-production.up.railway.app/add/leads", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -103,7 +103,7 @@ function Dashboard() {
     if (user.secretKey == "forward@2025") {
       async function loadData() {
         try {
-          const response = await fetch("http://localhost:8010/get/all/brands", {
+          const response = await fetch("https://forwardbackendserver-production.up.railway.app/get/all/brands", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
