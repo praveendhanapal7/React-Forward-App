@@ -1,4 +1,4 @@
-import { Link, Navigate, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router";
 import "./Pages.css";
 import { getBlogPostBySlug } from "./blogPosts";
 

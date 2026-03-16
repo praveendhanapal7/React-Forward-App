@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import hero from "./assets/HeroBanner.png";
 import "./App.css";
 
@@ -27,7 +27,10 @@ function HeroBanner() {
         </p>
 
         <div className="HeroActions">
-          <Link to="/get-started" className="HeroBtn HeroBtnPrimary HeroBtnLink">
+          <Link
+            to="/get-started"
+            className="HeroBtn HeroBtnPrimary HeroBtnLink"
+          >
             Get Started
           </Link>
           <Link to="/services" className="HeroBtn HeroBtnSecondary HeroBtnLink">

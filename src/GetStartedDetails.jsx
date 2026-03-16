@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { FaCheckCircle } from "react-icons/fa";
 import "./Pages.css";
 
@@ -45,7 +45,9 @@ function GetStartedDetails() {
       <div className="PageSection">
         <div className="DetailsLayout">
           <article className="InfoCard DetailsLeft">
-            <h3 style={{ marginBottom: "10px" }}>Included Services Before Purchase</h3>
+            <h3 style={{ marginBottom: "10px" }}>
+              Included Services Before Purchase
+            </h3>
             <ul className="FeatureList">
               {includedServices.map((service) => (
                 <li key={service}>
@@ -59,27 +61,57 @@ function GetStartedDetails() {
           <form className="SignInForm DetailsRight" onSubmit={handleContinue}>
             <div className="Field">
               <label htmlFor="brand-name">Brand Name</label>
-              <input id="brand-name" name="brandName" type="text" placeholder="Your brand name" required />
+              <input
+                id="brand-name"
+                name="brandName"
+                type="text"
+                placeholder="Your brand name"
+                required
+              />
             </div>
 
             <div className="Field">
               <label htmlFor="owner-name">Owner / Contact Person</label>
-              <input id="owner-name" name="ownerName" type="text" placeholder="Your name" required />
+              <input
+                id="owner-name"
+                name="ownerName"
+                type="text"
+                placeholder="Your name"
+                required
+              />
             </div>
 
             <div className="Field">
               <label htmlFor="contact-email">Email Address</label>
-              <input id="contact-email" name="email" type="email" placeholder="you@brand.com" required />
+              <input
+                id="contact-email"
+                name="email"
+                type="email"
+                placeholder="you@brand.com"
+                required
+              />
             </div>
 
             <div className="Field">
               <label htmlFor="contact-phone">Phone Number</label>
-              <input id="contact-phone" name="phone" type="tel" placeholder="+91 9XXXXXXXXX" required />
+              <input
+                id="contact-phone"
+                name="phone"
+                type="tel"
+                placeholder="+91 9XXXXXXXXX"
+                required
+              />
             </div>
 
             <div className="Field">
               <label htmlFor="goal">Primary Goal</label>
-              <input id="goal" name="goal" type="text" placeholder="Leads / Sales / Brand Awareness" required />
+              <input
+                id="goal"
+                name="goal"
+                type="text"
+                placeholder="Leads / Sales / Brand Awareness"
+                required
+              />
             </div>
 
             <button type="submit" className="PrimaryBtn">

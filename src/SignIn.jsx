@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import "./Pages.css";
 import { FaCheckCircle } from "react-icons/fa";
 
@@ -45,7 +45,7 @@ function SignIn() {
         navigate("/dashboard", { state: authSign });
       } else {
         setStatus("Invalid credentials");
-          setLoading(false);
+        setLoading(false);
       }
     } catch (error) {
       console.log(error);

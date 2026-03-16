@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router";
 import { HiMenuAlt3, HiX } from "react-icons/hi";
 import logo from "/Images/forward-logo.png";
 import "./Header.css";
@@ -73,7 +73,11 @@ function Header() {
         </Link>
 
         {auth ? (
-          <button type="button" className="HeaderButton" onClick={handleSignOut}>
+          <button
+            type="button"
+            className="HeaderButton"
+            onClick={handleSignOut}
+          >
             Sign Out
           </button>
         ) : null}

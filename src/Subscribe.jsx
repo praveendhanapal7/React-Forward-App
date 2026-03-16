@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import "./Pages.css";
 
 function Subscribe() {
@@ -10,8 +10,8 @@ function Subscribe() {
         <p className="PageTag">Subscribe</p>
         <h1 className="PageTitle">Join Forward Growth Updates</h1>
         <p className="PageLead">
-          Subscribe to receive campaign tips, content strategy ideas, and practical
-          digital marketing updates from FORWARD Agency.
+          Subscribe to receive campaign tips, content strategy ideas, and
+          practical digital marketing updates from FORWARD Agency.
         </p>
       </div>
 
@@ -24,7 +24,17 @@ function Subscribe() {
               will be redirected here automatically.
             </p>
             <div style={{ marginTop: "14px" }}>
-              <Link className="PrimaryBtn" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", justifyContent: "center", width: "220px" }} to="/signup?next=/subscribe">
+              <Link
+                className="PrimaryBtn"
+                style={{
+                  textDecoration: "none",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "220px",
+                }}
+                to="/signup?next=/subscribe"
+              >
                 Go to Sign Up
               </Link>
             </div>

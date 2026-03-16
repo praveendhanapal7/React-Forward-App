@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router";
 import { FaCheckCircle, FaBullhorn } from "react-icons/fa";
 
 import "./Pages.css";
@@ -48,9 +48,13 @@ function GetStarted() {
         }),
       });
 
-      setStatusMessage("Your enquiry has been sent, you'll get the response soon.");
+      setStatusMessage(
+        "Your enquiry has been sent, you'll get the response soon.",
+      );
     } catch (error) {
-      setStatusMessage(error.message || "Unable to send enquiry now. Please try again.");
+      setStatusMessage(
+        error.message || "Unable to send enquiry now. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -80,7 +84,8 @@ function GetStarted() {
             <h3>Complete Package Price</h3>
           </div>
           <p>
-            Full service plan covering analysis to execution: <strong>₹13,999</strong>
+            Full service plan covering analysis to execution:{" "}
+            <strong>₹13,999</strong>
           </p>
         </article>
       </div>
@@ -99,7 +104,10 @@ function GetStarted() {
         </article>
       </div>
 
-      <div className="PageSection" style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+      <div
+        className="PageSection"
+        style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}
+      >
         <button
           type="button"
           className="PrimaryBtn"
@@ -115,7 +123,19 @@ function GetStarted() {
         >
           {isSubmitting ? "Sending..." : "Contact Team to Complete Purchase"}
         </button>
-        <Link className="PrimaryBtn" style={{ maxWidth: "220px", textDecoration: "none", display: "inline-flex", alignItems: "center", justifyContent: "center", background: "#fff", color: "#ce050d" }} to="/services">
+        <Link
+          className="PrimaryBtn"
+          style={{
+            maxWidth: "220px",
+            textDecoration: "none",
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "#fff",
+            color: "#ce050d",
+          }}
+          to="/services"
+        >
           View Services
         </Link>
       </div>

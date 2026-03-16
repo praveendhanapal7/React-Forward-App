@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import "./Pages.css";
 import { FaCheckCircle } from "react-icons/fa";
 import { blogPosts } from "./blogPosts";
@@ -14,7 +14,9 @@ function Blog() {
     <section className="PageShell">
       <div className="PageHero">
         <p className="PageTag">Blog</p>
-        <h1 className="PageTitle">Detailed Insights from Real Agency Execution</h1>
+        <h1 className="PageTitle">
+          Detailed Insights from Real Agency Execution
+        </h1>
         <p className="PageLead">
           These articles are based on practical workflow used in Forward Agency,
           covering planning, production, quality, and performance-driven growth.

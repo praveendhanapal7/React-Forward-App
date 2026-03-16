@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import "./Pages.css";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router";
 
 function Dashboard() {
   const location = useLocation();
   const user = location.state;
+  console.log(user)
   let selectedClient;
   const [leads, setLeads] = useState([]);
   const [clientName, setClientName] = useState("");
@@ -21,8 +22,9 @@ function Dashboard() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const payload = { brandName: user.brandName ,
-          secretKey:user.secretKey
+        const payload = {
+          brandName: user.brandName,
+          secretKey: user.secretKey,
         };
 
         const response = await fetch("http://localhost:8010/get/leads/all", {
@@ -123,6 +125,7 @@ function Dashboard() {
 
   return (
     <section className="PageShell">
+ 
       <div className="PageHero">
         <p className="PageTag">Dashboard</p>
 
