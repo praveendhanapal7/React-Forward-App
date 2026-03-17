@@ -27,7 +27,7 @@ function Dashboard() {
           secretKey: user.secretKey,
         };
 
-        const response = await fetch("/get/leads/all", {
+        const response = await fetch("https://forwardbackendserver-production.up.railway.app/get/leads/all", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
