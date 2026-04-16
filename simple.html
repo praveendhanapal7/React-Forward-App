@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Featured Products</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .section-padding {
+      margin-top: 30px;
+      margin-bottom: 15px;
+      padding: 0 20px;
+    }
+
+    .page-width {
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .f-collection-title {
+      padding-bottom: 15px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .product-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .product-card {
+      border: 1px solid #eee;
+      padding: 15px;
+      text-align: center;
+      transition: 0.3s;
+    }
+
+    .product-card:hover {
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .product-card img {
+      width: 100%;
+      height: auto;
+    }
+
+    .product-title {
+      font-size: 16px;
+      margin: 10px 0;
+    }
+
+    .product-price {
+      color: #333;
+      font-weight: bold;
+    }
+
+    .btn {
+      margin-top: 10px;
+      display: inline-block;
+      padding: 10px 15px;
+      background: black;
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    /* Mobile */
+    @media screen and (max-width: 749px) {
+      .f-collection-title {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="page-width section-padding">
+
+    <h2 class="f-collection-title">COLLECTION NAME</h2>
+
+    <div class="product-list">
+
+      <!-- Product 1 -->
+      <div class="product-card">
+        <img src="https://via.placeholder.com/300" alt="Product">
+        <div class="product-title">Product Name 1</div>
+        <div class="product-price">₹499</div>
+        <a href="#" class="btn">View Product</a>
+      </div>
+
+      <!-- Product 2 -->
+      <div class="product-card">
+        <img src="https://via.placeholder.com/300" alt="Product">
+        <div class="product-title">Product Name 2</div>
+        <div class="product-price">₹699</div>
+        <a href="#" class="btn">View Product</a>
+      </div>
+
+      <!-- Product 3 -->
+      <div class="product-card">
+        <img src="https://via.placeholder.com/300" alt="Product">
+        <div class="product-title">Product Name 3</div>
+        <div class="product-price">₹899</div>
+        <a href="#" class="btn">View Product</a>
+      </div>
+
+      <!-- Product 4 -->
+      <div class="product-card">
+        <img src="https://via.placeholder.com/300" alt="Product">
+        <div class="product-title">Product Name 4</div>
+        <div class="product-price">₹999</div>
+        <a href="#" class="btn">View Product</a>
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+</html>

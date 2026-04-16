@@ -1,17 +1,17 @@
-import { Link , useNavigate} from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useState } from "react";
 import "./Pages.css";
 
 function SignUp() {
   const navigate = useNavigate();
   const [role, setRole] = useState("client");
-
-  const [status, setStatus] = useState(false);
+  const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
-  const handleSignUp = async (event) => {
 
-    setLoading(true);
+  const handleSignUp = async (event) => {
     event.preventDefault();
+    setLoading(true);
+    setStatus("");
 
     const form = new FormData(event.currentTarget);
 
@@ -23,50 +23,53 @@ function SignUp() {
       accountType: form.get("role"),
       password: form.get("password"),
       brandName: role === "client" ? form.get("brandName") : null,
-      secretKey : form.get("secretKey")
+      secretKey: form.get("secretKey"),
     };
 
-  
-  try {
+    try {
+      const response = await fetch("http://localhost:8010/add/user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
-    const response = await fetch("https://forwardbackendserver-production.up.railway.app/add/user", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    });
+      const text = await response.text();
+      let userContent = null;
 
-     if (!response.ok) {
-    setStatus(true);
-    throw new Error("Server returned error: " + response.status);
-  }
+      if (text) {
+        try {
+          userContent = JSON.parse(text);
+        } catch {
+          userContent = null;
+        }
+      }
 
-  const text = await response.text();   // read response safely
+      if (!response.ok) {
+        setStatus(
+          userContent?.message ||
+            "Unable to create the account. The email may already be in use / Access code was wrong"
+        );
+        return;
+      }
 
-  const user_content = text ? JSON.parse(text) : null;
+      if (!userContent) {
+        setStatus("Account created, but the server returned an invalid response.");
+        return;
+      }
 
-   console.log(user_content);
-  if(user_content!==null)
-  {
-    navigate("/dashboard", { state: user_content });
-    
-  }
-  else{
-setLoading(false);
-setStatus(true)
-}
-   
-  }
-   catch (error) {
-
-    console.error("error da thambi");
-  }
-  
-
-
+      localStorage.setItem("forward_auth_user", JSON.stringify(userContent));
+      navigate("/dashboard", { state: userContent });
+    } catch (error) {
+      console.error("Sign up failed:", error);
+      setStatus("Unable to reach the server right now. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
+  
   return (
     <section className="PageShell">
       <div className="PageHero">
@@ -135,15 +138,11 @@ setStatus(true)
             <input name="secretKey" type="password" placeholder="Access Code" required />
           </div>
 
-          <button type="submit" className="PrimaryBtn">
-          {loading ? "Creating Account..." : "Create Account"}
+          <button type="submit" className="PrimaryBtn" disabled={loading}>
+            {loading ? "Creating Account..." : "Create Account"}
           </button>
 
-     { status ? 
-          (<p className="MutedText">
-            Your Email was already signed in
-          </p> ) :  null
-}
+          {status ? <p className="MutedText">{status}</p> : null}
 
           <p className="MutedText">
             Already have an account? <Link to="/signin">Sign In</Link>

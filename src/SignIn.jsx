@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import "./Pages.css";
 import { FaCheckCircle } from "react-icons/fa";
@@ -16,18 +16,15 @@ function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSignIn = async (event) => {
     event.preventDefault();
+    setStatus("");
+    setLoading(true);
 
     try {
-      setLoading(true);
-
-      console.log("trying");
-
-      const auth = await fetch("https://forwardbackendserver-production.up.railway.app/user/auth/login", {
+      const auth = await fetch("http://localhost:8010/user/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -38,18 +35,26 @@ function SignIn() {
         }),
       });
 
-      const authSign = await auth.json();
-      console.log(authSign);
+      let authSign = null;
+      try {
+        authSign = await auth.json();
+      } catch {
+        authSign = null;
+      }
 
-      if (auth.ok) {
+      if (auth.ok && authSign) {
+        localStorage.setItem("forward_auth_user", JSON.stringify(authSign));
         navigate("/dashboard", { state: authSign });
       } else {
-        setStatus("Invalid credentials");
-        setLoading(false);
+        setStatus(
+          authSign?.message || "Unable to sign in. Check your credentials and try again."
+        );
       }
     } catch (error) {
-      console.log(error);
-      navigate("/signin");
+      console.error("Sign in failed:", error);
+      setStatus("Unable to reach the server right now. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -109,7 +114,7 @@ function SignIn() {
             />
           </div>
 
-          <button type="submit" className="PrimaryBtn" disabled={isSubmitting}>
+          <button type="submit" className="PrimaryBtn" disabled={loading}>
             {loading ? "Signing In..." : "Sign In"}
           </button>
 
