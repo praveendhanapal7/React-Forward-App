@@ -24,9 +24,8 @@ function Header() {
     { label: "Services", path: "/services" },
     { label: "About", path: "/about" },
     { label: "Blog", path: "/blog" },
+    { label: "Contact", path: "/contact" },
     ...(auth ? [{ label: "Dashboard", path: "/dashboard" }] : []),
-    { label: "Sign In", path: "/signin" },
-    { label: "Sign Up", path: "/signup" },
   ];
 
   const handleSignOut = () => {
@@ -64,14 +63,6 @@ function Header() {
       </nav>
 
       <div className="ButtonsContainer">
-        <Link to="/get-started" className="HeaderButton HeaderActionLink">
-          Subscribe
-        </Link>
-
-        <Link to="/contact" className="HeaderButton2 HeaderActionLink">
-          Contact
-        </Link>
-
         {auth ? (
           <button
             type="button"
@@ -80,7 +71,17 @@ function Header() {
           >
             Sign Out
           </button>
-        ) : null}
+        ) : (
+          <>
+            <Link to="/signin" className="HeaderButton HeaderActionLink">
+              Sign In
+            </Link>
+
+            <Link to="/signup" className="HeaderButton2 HeaderActionLink">
+              Sign Up
+            </Link>
+          </>
+        )}
       </div>
 
       <button

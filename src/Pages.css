@@ -251,6 +251,115 @@
   color: #222;
 }
 
+.DashboardTopGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.75fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.DashboardFormCard {
+  max-width: none;
+}
+
+.StatusGraphCard {
+  min-height: 100%;
+  background: linear-gradient(180deg, #fffafa 0%, #ffffff 100%);
+}
+
+.StatusGraphHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.StatusGraphHead h3 {
+  margin: 2px 0 0;
+}
+
+.StatusGraphTotal {
+  min-width: 94px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid #f0dede;
+  text-align: center;
+}
+
+.StatusGraphTotal span {
+  display: block;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1;
+  color: #ce050d;
+}
+
+.StatusGraphTotal small {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #666;
+}
+
+.StatusGraphList {
+  display: grid;
+  gap: 14px;
+}
+
+.StatusGraphRow {
+  display: grid;
+  gap: 7px;
+}
+
+.StatusGraphLabelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.StatusGraphLabelWrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.StatusGraphDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.StatusGraphLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2f2f2f;
+}
+
+.StatusGraphCount {
+  font-size: 13px;
+  font-weight: 700;
+  color: #555;
+}
+
+.StatusGraphTrack {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: #f2e6e6;
+  overflow: hidden;
+}
+
+.StatusGraphFill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
 .Field input {
   height: 44px;
   border-radius: 10px;
@@ -309,6 +418,10 @@
   }
 
   .DetailsLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .DashboardTopGrid {
     grid-template-columns: 1fr;
   }
 

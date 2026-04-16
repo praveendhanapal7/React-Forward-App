@@ -379,8 +379,98 @@
 import { useEffect, useMemo, useState } from "react";
 import "./Pages.css";
 import { Navigate, useLocation } from "react-router";
+import { HiOutlinePhone } from "react-icons/hi";
+import { FaWhatsapp } from "react-icons/fa";
 
 function Dashboard() {
+  const formatPhoneLink = (phoneNumber) =>
+    (phoneNumber || "").replace(/[^\d+]/g, "");
+
+  const formatWhatsAppLink = (phoneNumber) =>
+    (phoneNumber || "").replace(/\D/g, "");
+
+  const getStatusMeta = (leadStatus) => {
+    switch (leadStatus) {
+      case "NEW":
+        return { label: "New", color: "#0ea5e9" };
+      case "NO_RESPONSE":
+        return { label: "No Response", color: "#ef4444" };
+      case "CALL_BACK":
+        return { label: "Call Back", color: "#eab308" };
+      case "INTERESTED":
+        return { label: "Interested", color: "#22c55e" };
+      case "FOLLOW_UP":
+        return { label: "Follow Up", color: "#8b5cf6" };
+      case "WON":
+        return { label: "Won", color: "#14b8a6" };
+      case "LOST":
+        return { label: "Lost", color: "#64748b" };
+      default:
+        return { label: "New", color: "#0ea5e9" };
+    }
+  };
+
+  const getStatusStyle = (leadStatus, isUpdating) => {
+    if (isUpdating) {
+      return {
+        backgroundColor: "#f3f4f6",
+        color: "#111827",
+        border: "1px solid #d1d5db",
+      };
+    }
+
+    switch (leadStatus) {
+      case "NEW":
+        return {
+          backgroundColor: "#e0f2fe",
+          color: "#075985",
+          border: "1px solid #7dd3fc",
+        };
+      case "NO_RESPONSE":
+        return {
+          backgroundColor: "#fee2e2",
+          color: "#991b1b",
+          border: "1px solid #fca5a5",
+        };
+      case "CALL_BACK":
+        return {
+          backgroundColor: "#fef9c3",
+          color: "#854d0e",
+          border: "1px solid #fde047",
+        };
+      case "INTERESTED":
+        return {
+          backgroundColor: "#dcfce7",
+          color: "#166534",
+          border: "1px solid #86efac",
+        };
+      case "FOLLOW_UP":
+        return {
+          backgroundColor: "#ede9fe",
+          color: "#6d28d9",
+          border: "1px solid #c4b5fd",
+        };
+      case "WON":
+        return {
+          backgroundColor: "#ccfbf1",
+          color: "#115e59",
+          border: "1px solid #5eead4",
+        };
+      case "LOST":
+        return {
+          backgroundColor: "#e2e8f0",
+          color: "#334155",
+          border: "1px solid #94a3b8",
+        };
+      default:
+        return {
+          backgroundColor: "#ffffff",
+          color: "#111827",
+          border: "1px solid #d1d5db",
+        };
+    }
+  };
+
   const location = useLocation();
 
   const user = useMemo(() => {
@@ -407,9 +497,39 @@ function Dashboard() {
   const [requirement, setRequirement] = useState("");
   const [status, setStatus] = useState("");
   const [enquiryButton, setEnquiryButton] = useState("Add Lead");
+  const [updatingLeadId, setUpdatingLeadId] = useState(null);
   const [brandnames, setBrandnames] = useState([]);
   const [loadError, setLoadError] = useState("");
   const [brandsError, setBrandsError] = useState("");
+
+  const statusSummary = useMemo(() => {
+    const orderedStatuses = [
+      "NEW",
+      "NO_RESPONSE",
+      "CALL_BACK",
+      "INTERESTED",
+      "FOLLOW_UP",
+      "WON",
+      "LOST",
+    ];
+
+    const counts = orderedStatuses.map((leadStatus) => {
+      const count = leads.filter((lead) => lead.status === leadStatus).length;
+      return {
+        status: leadStatus,
+        count,
+        ...getStatusMeta(leadStatus),
+      };
+    });
+
+    const maxCount = Math.max(...counts.map((item) => item.count), 1);
+
+    return {
+      total: leads.length,
+      maxCount,
+      counts,
+    };
+  }, [leads]);
 
   useEffect(() => {
     if (!user) {
@@ -456,6 +576,9 @@ function Dashboard() {
 
   const updateStatus = async (leadId, newStatus) => {
     try {
+      setStatus("");
+      setUpdatingLeadId(leadId);
+
       const response = await fetch(
         `forwardbackendserver-production.up.railway.app/leads/${leadId}/status`,
         {
@@ -481,6 +604,8 @@ function Dashboard() {
     } catch (error) {
       console.error("Failed to update lead status:", error);
       setStatus("Unable to update lead status right now.");
+    } finally {
+      setUpdatingLeadId(null);
     }
   };
 
@@ -562,7 +687,7 @@ function Dashboard() {
         setBrandsError("");
 
         try {
-          const response = await fetch("forwardbackendserver-production.up.railway.app/all/brands", {
+          const response = await fetch("forwardbackendserver-production.up.railway.app/get/all/brands", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -615,64 +740,101 @@ function Dashboard() {
       <div className="PageSection">
         <h2 className="PageSectionTitle">Add Lead Requirement</h2>
 
-        <form
-          className="SignInForm"
-          style={{ maxWidth: "760px" }}
-          onSubmit={handleAddLead}
-        >
-          <div className="Field">
-            <label>Lead Number / Contact</label>
+        <div className="DashboardTopGrid">
+          <form className="SignInForm DashboardFormCard" onSubmit={handleAddLead}>
+            <div className="Field">
+              <label>Lead Number / Contact</label>
 
-            <input
-              type="text"
-              placeholder="+91 9XXXXXXXXX"
-              value={leadNumber}
-              onChange={(e) => setLeadNumber(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="Field">
-            <label>Lead Requirement</label>
-
-            <input
-              type="text"
-              placeholder="General Enquiry, Lenovo Loq, etc..."
-              value={requirement}
-              onChange={(e) => setRequirement(e.target.value)}
-              required
-            />
-          </div>
-
-          {user.accountType === "Agency Staff" && (
-            <div className="Field" style={{ width: "300px" }}>
-              <label>Client Name</label>
-
-              <select
-                onChange={(e) => {
-                  setClientName(e.target.value);
-                }}
-                value={clientName}
-              >
-                {brandnames.length === 0 && <option>Loading...</option>}
-                {brandnames.map((brand, index) => (
-                  <option key={index} value={brand}>
-                    {brand}
-                  </option>
-                ))}
-              </select>
-
-              {brandsError ? <p className="MutedText">{brandsError}</p> : null}
+              <input
+                type="text"
+                placeholder="+91 9XXXXXXXXX"
+                value={leadNumber}
+                onChange={(e) => setLeadNumber(e.target.value)}
+                required
+              />
             </div>
-          )}
 
-          <button type="submit" className="PrimaryBtn">
-            {enquiryButton}
-          </button>
+            <div className="Field">
+              <label>Lead Requirement</label>
 
-          {clientName && <p className="MutedText">{clientName}</p>}
-          {status && <p className="MutedText">{status}</p>}
-        </form>
+              <input
+                type="text"
+                placeholder="General Enquiry, Lenovo Loq, etc..."
+                value={requirement}
+                onChange={(e) => setRequirement(e.target.value)}
+                required
+              />
+            </div>
+
+            {user.accountType === "Agency Staff" && (
+              <div className="Field" style={{ width: "300px" }}>
+                <label>Client Name</label>
+
+                <select
+                  onChange={(e) => {
+                    setClientName(e.target.value);
+                  }}
+                  value={clientName}
+                >
+                  {brandnames.length === 0 && <option>Loading...</option>}
+                  {brandnames.map((brand, index) => (
+                    <option key={index} value={brand}>
+                      {brand}
+                    </option>
+                  ))}
+                </select>
+
+                {brandsError ? <p className="MutedText">{brandsError}</p> : null}
+              </div>
+            )}
+
+            <button type="submit" className="PrimaryBtn">
+              {enquiryButton}
+            </button>
+
+            {clientName && <p className="MutedText">{clientName}</p>}
+            {status && <p className="MutedText">{status}</p>}
+          </form>
+
+          <article className="InfoCard StatusGraphCard">
+            <div className="StatusGraphHead">
+              <div>
+                <p className="PageTag">Lead Snapshot</p>
+                <h3>Status Overview</h3>
+              </div>
+              <div className="StatusGraphTotal">
+                <span>{statusSummary.total}</span>
+                <small>Total Leads</small>
+              </div>
+            </div>
+
+            <div className="StatusGraphList">
+              {statusSummary.counts.map((item) => (
+                <div className="StatusGraphRow" key={item.status}>
+                  <div className="StatusGraphLabelRow">
+                    <div className="StatusGraphLabelWrap">
+                      <span
+                        className="StatusGraphDot"
+                        style={{ backgroundColor: item.color }}
+                      />
+                      <span className="StatusGraphLabel">{item.label}</span>
+                    </div>
+                    <span className="StatusGraphCount">{item.count}</span>
+                  </div>
+                  <div className="StatusGraphTrack">
+                    <div
+                      className="StatusGraphFill"
+                      style={{
+                        width: `${(item.count / statusSummary.maxCount) * 100}%`,
+                        backgroundColor: item.color,
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </article>
+        </div>
       </div>
 
       <div className="PageSection">
@@ -708,6 +870,7 @@ function Dashboard() {
                   <th>Added By</th>
                   <th>Entry Time</th>
                   <th>Lead Status</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
 
@@ -722,32 +885,99 @@ function Dashboard() {
                     <td>{lead.addedBy}</td>
                     <td>{lead.enquiryEntry}</td>
                     <td>
+                      {(() => {
+                        const statusStyle = getStatusStyle(
+                          lead.status,
+                          updatingLeadId === lead.id,
+                        );
+
+                        return (
                       <select
-                        value={lead.status}
+                        value={updatingLeadId === lead.id ? "" : lead.status}
+                        disabled={updatingLeadId === lead.id}
                         onChange={(e) => updateStatus(lead.id, e.target.value)}
                         style={{
                           padding: "8px 12px",
                           borderRadius: "10px",
-                          border: "1px solid #d1d5db",
-                          backgroundColor: "#ffffff",
-                          color: "#111827",
+                          border: statusStyle.border,
+                          backgroundColor: statusStyle.backgroundColor,
+                          color: statusStyle.color,
                           fontSize: "14px",
-                          fontWeight: "500",
-                          cursor: "pointer",
+                          fontWeight: "600",
+                          cursor:
+                            updatingLeadId === lead.id ? "not-allowed" : "pointer",
                           outline: "none",
                           minWidth: "150px",
                           boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
+                          opacity: updatingLeadId === lead.id ? 0.8 : 1,
                         }}
                       >
-                        <option value="NEW">New</option>
-                        <option value="NO_RESPONSE">No Response</option>
-                        <option value="CALL_BACK">Call Back</option>
-                        <option value="INTERESTED">Interested</option>
-                        <option value="NOT_INTERESTED">Not Interested</option>
-                        <option value="FOLLOW_UP">Follow Up</option>
-                        <option value="WON">Won</option>
-                        <option value="LOST">Lost</option>
+                        {updatingLeadId === lead.id ? (
+                          <option value="">Updating...</option>
+                        ) : (
+                          <>
+                            <option value="NEW">New</option>
+                            <option value="NO_RESPONSE">No Response</option>
+                            <option value="CALL_BACK">Call Back</option>
+                            <option value="INTERESTED">Interested</option>
+                            <option value="FOLLOW_UP">Follow Up</option>
+                            <option value="WON">Won</option>
+                            <option value="LOST">Lost</option>
+                          </>
+                        )}
                       </select>
+                        );
+                      })()}
+                    </td>
+                    <td>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "8px",
+                          flexWrap: "wrap",
+                        }}
+                      >
+                        <a
+                          href={`tel:${formatPhoneLink(lead.phoneNumber)}`}
+                          aria-label={`Call ${lead.phoneNumber}`}
+                          title="Call"
+                          style={{
+                            width: "38px",
+                            height: "38px",
+                            borderRadius: "12px",
+                            background: "#111827",
+                            color: "#ffffff",
+                            textDecoration: "none",
+                            fontSize: "18px",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <HiOutlinePhone />
+                        </a>
+                        <a
+                          href={`https://wa.me/${formatWhatsAppLink(lead.phoneNumber)}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          aria-label={`WhatsApp ${lead.phoneNumber}`}
+                          title="WhatsApp"
+                          style={{
+                            width: "38px",
+                            height: "38px",
+                            borderRadius: "12px",
+                            background: "#25D366",
+                            color: "#ffffff",
+                            textDecoration: "none",
+                            fontSize: "18px",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <FaWhatsapp />
+                        </a>
+                      </div>
                     </td>
                   </tr>
                 ))}

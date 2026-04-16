@@ -27,7 +27,7 @@ function SignUp() {
     };
 
     try {
-      const response = await fetch("forwardbackendserver-production.up.railway.app/add/user", {
+      const response = await fetch("forwardbackendserver-production.up.railway.app/user", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
