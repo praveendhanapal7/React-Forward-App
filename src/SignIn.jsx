@@ -24,7 +24,7 @@ function SignIn() {
     setLoading(true);
 
     try {
-      const auth = await fetch("forwardbackendserver-production.up.railway.app/user/auth/login", {
+      const auth = await fetch("https://forwardbackendserver-production.up.railway.app/user/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
