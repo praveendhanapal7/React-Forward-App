@@ -27,7 +27,7 @@ function SignUp() {
     };
 
     try {
-      const response = await fetch("https://forwardbackendserver-production.up.railway.app/add/user", {
+      const response = await fetch("forwardbackendserver-production.up.railway.app/add/user", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -133,8 +133,11 @@ function SignUp() {
             <input name="password" type="password" placeholder="Create password" required />
           </div>
 
+
+
            <div className="Field">
-            <label>Create Organization Access Code</label>
+             {role === "client" ?
+            <label>Create Organization Access Code</label>:  <label>Enter the Organization Access Code</label>}
             <input name="secretKey" type="password" placeholder="Access Code" required />
           </div>
 
