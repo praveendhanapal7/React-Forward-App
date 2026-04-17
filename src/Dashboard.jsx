@@ -494,6 +494,7 @@ function Dashboard() {
   const [clientName, setClientName] = useState("");
   const [loadingLeads, setLoadingLeads] = useState(true);
   const [leadNumber, setLeadNumber] = useState("");
+  const [link, setLink] = useState("");
   const [requirement, setRequirement] = useState("");
   const [status, setStatus] = useState("");
   const [enquiryButton, setEnquiryButton] = useState("Add Lead");
@@ -531,51 +532,46 @@ function Dashboard() {
     };
   }, [leads]);
 
-
-useEffect(() => {
-  if (!user) {
-    setLeads([]);
-    setLoadingLeads(false);
-    return;
-  }
-
-  const fetchLeads = async () => {
-    try {
-      const payload = {
-        brandName: user.brandName,
-        secretKey: user.secretKey,
-      };
-
-      const res = await fetch("https://forwardbackendserver-production.up.railway.app/get/leads/all", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await res.json();
-      setLeads(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error(err);
-    } finally {
+  useEffect(() => {
+    if (!user) {
+      setLeads([]);
       setLoadingLeads(false);
+      return;
     }
-  };
 
-  // first load
-  fetchLeads();
+    const fetchLeads = async () => {
+      try {
+        const payload = {
+          brandName: user.brandName,
+          secretKey: user.secretKey,
+        };
 
-  // auto refresh every 5 min
-  const timer = setInterval(fetchLeads, 10000);
+        const res = await fetch("https://forwardbackendserver-production.up.railway.app/get/leads/all", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
 
-  return () => clearInterval(timer);
-}, [user]);
+        const data = await res.json();
 
+        setLeads(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoadingLeads(false);
+      }
+    };
 
+    // first load
+    fetchLeads();
 
+    // auto refresh every 5 min
+    const timer = setInterval(fetchLeads, 10000);
 
- 
+    return () => clearInterval(timer);
+  }, [user]);
 
   const updateStatus = async (leadId, newStatus) => {
     try {
@@ -649,6 +645,7 @@ useEffect(() => {
           ? user.name
           : `${user.name} (Agency Member)`,
       status: "NEW",
+      Link:link
     };
 
     try {
@@ -668,6 +665,7 @@ useEffect(() => {
 
       setLeads((currentLeads) => [savedLead, ...currentLeads]);
       setLeadNumber("");
+      setLink("");
       setRequirement("");
       setClientName("");
       setStatus("Lead entry added successfully.");
@@ -744,7 +742,10 @@ useEffect(() => {
         <h2 className="PageSectionTitle">Add Lead Requirement</h2>
 
         <div className="DashboardTopGrid">
-          <form className="SignInForm DashboardFormCard" onSubmit={handleAddLead}>
+          <form
+            className="SignInForm DashboardFormCard"
+            onSubmit={handleAddLead}
+          >
             <div className="Field">
               <label>Lead Number / Contact</label>
 
@@ -769,6 +770,17 @@ useEffect(() => {
               />
             </div>
 
+            <div className="Field">
+              <label>Link</label>
+
+              <input
+                type="text"
+                   value={link}
+                placeholder="http://hello.com"
+                onChange={(e) => setLink(e.target.value)}
+              />
+            </div>
+
             {user.accountType === "Agency Staff" && (
               <div className="Field" style={{ width: "300px" }}>
                 <label>Client Name</label>
@@ -787,7 +799,9 @@ useEffect(() => {
                   ))}
                 </select>
 
-                {brandsError ? <p className="MutedText">{brandsError}</p> : null}
+                {brandsError ? (
+                  <p className="MutedText">{brandsError}</p>
+                ) : null}
               </div>
             )}
 
@@ -869,6 +883,7 @@ useEffect(() => {
                 <tr>
                   <th>Lead Number</th>
                   <th>Requirement</th>
+                  <th>Link</th>
                   {user.accountType === "Agency Staff" && <th>Brand Name</th>}
                   <th>Added By</th>
                   <th>Entry Time</th>
@@ -882,6 +897,15 @@ useEffect(() => {
                   <tr key={lead.id}>
                     <td>{lead.phoneNumber}</td>
                     <td>{lead.requirements}</td>
+                    <td>
+                          {lead.Link ? 
+                      <a
+                        href={lead.Link}
+                        style={{ textDecoration: "none", color: "#055cce" }}
+                      >
+                     Client Link 
+                      </a>: <p>Link not provided.</p>}
+                    </td>
                     {user.accountType === "Agency Staff" && (
                       <td>{lead.clientName}</td>
                     )}
@@ -895,40 +919,46 @@ useEffect(() => {
                         );
 
                         return (
-                      <select
-                        value={updatingLeadId === lead.id ? "" : lead.status}
-                        disabled={updatingLeadId === lead.id}
-                        onChange={(e) => updateStatus(lead.id, e.target.value)}
-                        style={{
-                          padding: "8px 12px",
-                          borderRadius: "10px",
-                          border: statusStyle.border,
-                          backgroundColor: statusStyle.backgroundColor,
-                          color: statusStyle.color,
-                          fontSize: "14px",
-                          fontWeight: "600",
-                          cursor:
-                            updatingLeadId === lead.id ? "not-allowed" : "pointer",
-                          outline: "none",
-                          minWidth: "150px",
-                          boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
-                          opacity: updatingLeadId === lead.id ? 0.8 : 1,
-                        }}
-                      >
-                        {updatingLeadId === lead.id ? (
-                          <option value="">Updating...</option>
-                        ) : (
-                          <>
-                            <option value="NEW">New</option>
-                            <option value="NO_RESPONSE">No Response</option>
-                            <option value="CALL_BACK">Call Back</option>
-                            <option value="INTERESTED">Interested</option>
-                            <option value="FOLLOW_UP">Follow Up</option>
-                            <option value="WON">Won</option>
-                            <option value="LOST">Lost</option>
-                          </>
-                        )}
-                      </select>
+                          <select
+                            value={
+                              updatingLeadId === lead.id ? "" : lead.status
+                            }
+                            disabled={updatingLeadId === lead.id}
+                            onChange={(e) =>
+                              updateStatus(lead.id, e.target.value)
+                            }
+                            style={{
+                              padding: "8px 12px",
+                              borderRadius: "10px",
+                              border: statusStyle.border,
+                              backgroundColor: statusStyle.backgroundColor,
+                              color: statusStyle.color,
+                              fontSize: "14px",
+                              fontWeight: "600",
+                              cursor:
+                                updatingLeadId === lead.id
+                                  ? "not-allowed"
+                                  : "pointer",
+                              outline: "none",
+                              minWidth: "150px",
+                              boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
+                              opacity: updatingLeadId === lead.id ? 0.8 : 1,
+                            }}
+                          >
+                            {updatingLeadId === lead.id ? (
+                              <option value="">Updating...</option>
+                            ) : (
+                              <>
+                                <option value="NEW">New</option>
+                                <option value="NO_RESPONSE">No Response</option>
+                                <option value="CALL_BACK">Call Back</option>
+                                <option value="INTERESTED">Interested</option>
+                                <option value="FOLLOW_UP">Follow Up</option>
+                                <option value="WON">Won</option>
+                                <option value="LOST">Lost</option>
+                              </>
+                            )}
+                          </select>
                         );
                       })()}
                     </td>
