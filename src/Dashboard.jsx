@@ -52,7 +52,7 @@
 //           secretKey: user.secretKey,
 //         };
 
-//         const response = await fetch("https://forwardbackendserver-production.up.railway.app/leads/all", {
+//         const response = await fetch("http://localhost:8010/leads/all", {
 //           method: "POST",
 //           headers: {
 //             "Content-Type": "application/json",
@@ -91,7 +91,7 @@
 //       status:lead.status
 //     };
 
-//       fetch(`https://forwardbackendserver-production.up.railway.app/leads/${lead.id}/status`, {
+//       fetch(`http://localhost:8010/leads/${lead.id}/status`, {
 //   method: "PUT",
 //   headers: {
 //     "Content-Type": "application/json"
@@ -143,7 +143,7 @@
 
 //     //POSTING leads from backend
 //     try {
-//       const response = await fetch("https://forwardbackendserver-production.up.railway.app/add/leads", {
+//       const response = await fetch("http://localhost:8010/add/leads", {
 //         method: "POST",
 //         headers: {
 //           "Content-Type": "application/json",
@@ -181,7 +181,7 @@
 //         setBrandsError("");
 
 //         try {
-//           const response = await fetch("https://forwardbackendserver-production.up.railway.app/all/brands", {
+//           const response = await fetch("http://localhost:8010/all/brands", {
 //             method: "POST",
 //             headers: {
 //               "Content-Type": "application/json",
@@ -531,48 +531,51 @@ function Dashboard() {
     };
   }, [leads]);
 
-  useEffect(() => {
-    if (!user) {
-      setLeads([]);
+
+useEffect(() => {
+  if (!user) {
+    setLeads([]);
+    setLoadingLeads(false);
+    return;
+  }
+
+  const fetchLeads = async () => {
+    try {
+      const payload = {
+        brandName: user.brandName,
+        secretKey: user.secretKey,
+      };
+
+      const res = await fetch("http://localhost:8010/get/leads/all", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      setLeads(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error(err);
+    } finally {
       setLoadingLeads(false);
-      return;
     }
+  };
 
-    const loadData = async () => {
-      setLoadError("");
-      setLoadingLeads(true);
+  // first load
+  fetchLeads();
 
-      try {
-        const payload = {
-          brandName: user.brandName,
-          secretKey: user.secretKey,
-        };
+  // auto refresh every 5 min
+  const timer = setInterval(fetchLeads, 10000);
 
-        const response = await fetch("https://forwardbackendserver-production.up.railway.app/get/leads/all", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        });
+  return () => clearInterval(timer);
+}, [user]);
 
-        if (!response.ok) {
-          throw new Error(`Failed to load leads (${response.status})`);
-        }
 
-        const leadsData = await response.json();
-        setLeads(Array.isArray(leadsData) ? leadsData : []);
-      } catch (error) {
-        console.error("Error loading data:", error);
-        setLeads([]);
-        setLoadError("Unable to load lead entries right now.");
-      } finally {
-        setLoadingLeads(false);
-      }
-    };
 
-    loadData();
-  }, [user]);
+
+ 
 
   const updateStatus = async (leadId, newStatus) => {
     try {
@@ -580,7 +583,7 @@ function Dashboard() {
       setUpdatingLeadId(leadId);
 
       const response = await fetch(
-        `https://forwardbackendserver-production.up.railway.app/leads/${leadId}/status`,
+        `http://localhost:8010/leads/${leadId}/status`,
         {
           method: "PUT",
           headers: {
@@ -649,7 +652,7 @@ function Dashboard() {
     };
 
     try {
-      const response = await fetch("https://forwardbackendserver-production.up.railway.app/add/leads", {
+      const response = await fetch("http://localhost:8010/add/leads", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -687,7 +690,7 @@ function Dashboard() {
         setBrandsError("");
 
         try {
-          const response = await fetch("https://forwardbackendserver-production.up.railway.app/get/all/brands", {
+          const response = await fetch("http://localhost:8010/get/all/brands", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -957,7 +960,7 @@ function Dashboard() {
                           <HiOutlinePhone />
                         </a>
                         <a
-                          href={`https://wa.me/${formatWhatsAppLink(lead.phoneNumber)}`}
+                          href={`http://wa.me/${formatWhatsAppLink(lead.phoneNumber)}`}
                           target="_blank"
                           rel="noreferrer"
                           aria-label={`WhatsApp ${lead.phoneNumber}`}
