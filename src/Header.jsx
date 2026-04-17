@@ -67,7 +67,7 @@ function Header() {
 
  <>
     {console.log("hello : "+auth)}
-    auth();
+
             <Link to="/signin" className="HeaderButton HeaderActionLink">
               Sign In
             </Link>
