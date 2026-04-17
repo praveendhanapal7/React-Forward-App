@@ -567,7 +567,10 @@ function Dashboard() {
     // first load
     fetchLeads();
 
-  
+    // auto refresh every 5 min
+    const timer = setInterval(fetchLeads, 10000000);
+
+    return () => clearInterval(timer);
   }, [user]);
 
   const updateStatus = async (leadId, newStatus) => {
