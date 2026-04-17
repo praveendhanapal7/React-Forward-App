@@ -24,6 +24,7 @@ function Header() {
     { label: "Services", path: "/services" },
     { label: "About", path: "/about" },
     { label: "Blog", path: "/blog" },
+    { label: "Sign in", path: "/signin" },
     { label: "Contact", path: "/contact" },
     ...(auth ? [{ label: "Dashboard", path: "/dashboard" }] : []),
   ];
