@@ -14,7 +14,7 @@ function HeroBanner() {
         <p className="HeroEyebrow">FORWARD AGENCY</p>
 
         <h1 className="HeroTitle">
-          Grow Your Brand (Like Sondeep)
+          Grow Your Brand
           <br />
           With Smart
           <br />
