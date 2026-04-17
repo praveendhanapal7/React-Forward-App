@@ -568,7 +568,7 @@ function Dashboard() {
     fetchLeads();
 
     // auto refresh every 5 min
-    const timer = setInterval(fetchLeads, 300000);
+    const timer = setInterval(fetchLeads, 5000);
 
     return () => clearInterval(timer);
   }, [user]);
