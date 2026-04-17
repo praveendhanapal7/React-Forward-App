@@ -63,11 +63,7 @@ function Header() {
       </nav>
 
       <div className="ButtonsContainer">
-        {auth ? (
-
- <>
-    {console.log("hello : "+auth)}
-
+          <>
             <Link to="/signin" className="HeaderButton HeaderActionLink">
               Sign In
             </Link>
@@ -76,17 +72,6 @@ function Header() {
               Sign Up
             </Link>
           </>
-
-        
-        ) : (
-           <button
-            type="button"
-            className="HeaderButton"
-            onClick={handleSignOut}
-          >
-            Sign Out
-          </button>
-        )}
       </div>
 
       <button
