@@ -546,13 +546,16 @@ function Dashboard() {
           secretKey: user.secretKey,
         };
 
-        const res = await fetch("https://forwardbackendserver-production.up.railway.app/get/leads/all", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+        const res = await fetch(
+          "https://forwardbackendserver-production.up.railway.app/get/leads/all",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
           },
-          body: JSON.stringify(payload),
-        });
+        );
 
         const data = await res.json();
 
@@ -645,17 +648,20 @@ function Dashboard() {
           ? user.name
           : `${user.name} (Agency Member)`,
       status: "NEW",
-      Link:link
+      Link: link,
     };
 
     try {
-      const response = await fetch("https://forwardbackendserver-production.up.railway.app/add/leads", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        "https://forwardbackendserver-production.up.railway.app/add/leads",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newLead),
         },
-        body: JSON.stringify(newLead),
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`Failed to add lead (${response.status})`);
@@ -688,13 +694,16 @@ function Dashboard() {
         setBrandsError("");
 
         try {
-          const response = await fetch("https://forwardbackendserver-production.up.railway.app/get/all/brands", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
+          const response = await fetch(
+            "https://forwardbackendserver-production.up.railway.app/get/all/brands",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ secretKey: user.secretKey }),
             },
-            body: JSON.stringify({ secretKey: user.secretKey }),
-          });
+          );
 
           if (!response.ok) {
             throw new Error(`Failed to load brands (${response.status})`);
@@ -775,7 +784,7 @@ function Dashboard() {
 
               <input
                 type="text"
-                   value={link}
+                value={link}
                 placeholder="http://hello.com"
                 onChange={(e) => setLink(e.target.value)}
               />
@@ -898,13 +907,18 @@ function Dashboard() {
                     <td>{lead.phoneNumber}</td>
                     <td>{lead.requirements}</td>
                     <td>
-                          {lead.Link ? 
-                      <a
-                        href={lead.Link}
-                        style={{ textDecoration: "none", color: "#055cce" }}
-                      >
-                     Client Link 
-                      </a>: <p>Link not provided.</p>}
+                      {lead.Link ? (
+                        <a
+                          href={lead.Link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ textDecoration: "none", color: "#055cce" }}
+                        >
+                          Client Link
+                        </a>
+                      ) : (
+                        <p>Link not provided.</p>
+                      )}
                     </td>
                     {user.accountType === "Agency Staff" && (
                       <td>{lead.clientName}</td>
