@@ -52,7 +52,7 @@
 //           secretKey: user.secretKey,
 //         };
 
-//         const response = await fetch("https://forwardbackendserver-production.up.railway.app/leads/all", {
+//         const response = await fetch("http://localhost:8080/leads/all", {
 //           method: "POST",
 //           headers: {
 //             "Content-Type": "application/json",
@@ -91,7 +91,7 @@
 //       status:lead.status
 //     };
 
-//       fetch(`https://forwardbackendserver-production.up.railway.app/leads/${lead.id}/status`, {
+//       fetch(`http://localhost:8080/leads/${lead.id}/status`, {
 //   method: "PUT",
 //   headers: {
 //     "Content-Type": "application/json"
@@ -143,7 +143,7 @@
 
 //     //POSTING leads from backend
 //     try {
-//       const response = await fetch("https://forwardbackendserver-production.up.railway.app/add/leads", {
+//       const response = await fetch("http://localhost:8080/add/leads", {
 //         method: "POST",
 //         headers: {
 //           "Content-Type": "application/json",
@@ -181,7 +181,7 @@
 //         setBrandsError("");
 
 //         try {
-//           const response = await fetch("https://forwardbackendserver-production.up.railway.app/all/brands", {
+//           const response = await fetch("http://localhost:8080/all/brands", {
 //             method: "POST",
 //             headers: {
 //               "Content-Type": "application/json",
@@ -393,6 +393,8 @@ function Dashboard() {
     switch (leadStatus) {
       case "NEW":
         return { label: "New", color: "#0ea5e9" };
+      case "ATTENDED":
+        return { label: "ATTENDED", color: "#8af1da" };
       case "NO_RESPONSE":
         return { label: "No Response", color: "#ef4444" };
       case "CALL_BACK":
@@ -431,6 +433,12 @@ function Dashboard() {
           backgroundColor: "#fee2e2",
           color: "#991b1b",
           border: "1px solid #fca5a5",
+        };
+      case "ATTENDED":
+        return {
+          backgroundColor: "#ccfbf1",
+          color: "#0f766e",
+          border: "1px solid #5eead4",
         };
       case "CALL_BACK":
         return {
@@ -494,6 +502,7 @@ function Dashboard() {
   const [clientName, setClientName] = useState("");
   const [loadingLeads, setLoadingLeads] = useState(true);
   const [leadNumber, setLeadNumber] = useState("");
+  // const [leadNotes, setLeadNotes] = useState("");
   const [link, setLink] = useState("");
   const [requirement, setRequirement] = useState("");
   const [status, setStatus] = useState("");
@@ -506,6 +515,7 @@ function Dashboard() {
   const statusSummary = useMemo(() => {
     const orderedStatuses = [
       "NEW",
+      "ATTENDED",
       "NO_RESPONSE",
       "CALL_BACK",
       "INTERESTED",
@@ -532,6 +542,26 @@ function Dashboard() {
     };
   }, [leads]);
 
+  //set Lead Notes By Id
+  const setLeadNotes = async (a, b) => {
+    try {
+      const payload = {
+        id: a,
+        notes: b,
+      };
+
+      const res = await fetch("http://localhost:8080/add/notes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     if (!user) {
       setLeads([]);
@@ -546,7 +576,7 @@ function Dashboard() {
           secretKey: user.secretKey,
         };
 
-        const res = await fetch("https://forwardbackendserver-production.up.railway.app/get/leads/all", {
+        const res = await fetch("http://localhost:8080/get/leads/all", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -568,7 +598,7 @@ function Dashboard() {
     fetchLeads();
 
     // auto refresh every 5 min
-    const timer = setInterval(fetchLeads, 5000);
+    const timer = setInterval(fetchLeads, 30000);
 
     return () => clearInterval(timer);
   }, [user]);
@@ -579,7 +609,7 @@ function Dashboard() {
       setUpdatingLeadId(leadId);
 
       const response = await fetch(
-        `https://forwardbackendserver-production.up.railway.app/leads/${leadId}/status`,
+        `http://localhost:8080/leads/${leadId}/status`,
         {
           method: "PUT",
           headers: {
@@ -645,11 +675,11 @@ function Dashboard() {
           ? user.name
           : `${user.name} (Agency Member)`,
       status: "NEW",
-      Link:link
+      Link: link,
     };
 
     try {
-      const response = await fetch("https://forwardbackendserver-production.up.railway.app/add/leads", {
+      const response = await fetch("http://localhost:8080/add/leads", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -688,7 +718,7 @@ function Dashboard() {
         setBrandsError("");
 
         try {
-          const response = await fetch("https://forwardbackendserver-production.up.railway.app/get/all/brands", {
+          const response = await fetch("http://localhost:8080/get/all/brands", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -775,7 +805,7 @@ function Dashboard() {
 
               <input
                 type="text"
-                   value={link}
+                value={link}
                 placeholder="http://hello.com"
                 onChange={(e) => setLink(e.target.value)}
               />
@@ -887,6 +917,7 @@ function Dashboard() {
                   {user.accountType === "Agency Staff" && <th>Brand Name</th>}
                   <th>Added By</th>
                   <th>Entry Time</th>
+                  <th>Notes</th>
                   <th>Lead Status</th>
                   <th>Actions</th>
                 </tr>
@@ -898,20 +929,48 @@ function Dashboard() {
                     <td>{lead.phoneNumber}</td>
                     <td>{lead.requirements}</td>
                     <td>
-                          {lead.Link ? 
-                      <a
-                        href={lead.Link}
-                        style={{ textDecoration: "none", color: "#055cce" }}
-                         target="_blank"
-                      >
-                     Client Link 
-                      </a>: <p>Link not provided.</p>}
+                      {lead.Link ? (
+                        <a
+                          href={lead.Link}
+                          style={{ textDecoration: "none", color: "#055cce" }}
+                          target="_blank"
+                        >
+                          Client Link
+                        </a>
+                      ) : (
+                        <p>Link not provided.</p>
+                      )}
                     </td>
                     {user.accountType === "Agency Staff" && (
                       <td>{lead.clientName}</td>
                     )}
                     <td>{lead.addedBy}</td>
                     <td>{lead.enquiryEntry}</td>
+                    <td>
+                      {" "}
+                      <div className="Field">
+                        <input
+                          type="text"
+                          placeholder="eg : call on Monday.... "
+                          onChange={(e) => {
+                            const newValue = e.target.value;
+
+                            // update UI immediately
+                            setLeads((prev) =>
+                              prev.map((l) =>
+                                l.id === lead.id
+                                  ? { ...l, notes: newValue }
+                                  : l,
+                              ),
+                            );
+
+                            // call backend
+                            setLeadNotes(lead.id, newValue);
+                          }}
+                          value={lead.notes}
+                        />
+                      </div>
+                    </td>
                     <td>
                       {(() => {
                         const statusStyle = getStatusStyle(
@@ -951,8 +1010,9 @@ function Dashboard() {
                             ) : (
                               <>
                                 <option value="NEW">New</option>
-                                <option value="NO_RESPONSE">No Response</option>
+                                <option value="ATTENDED">Attended</option>
                                 <option value="CALL_BACK">Call Back</option>
+                                <option value="NO_RESPONSE">No Response</option>
                                 <option value="INTERESTED">Interested</option>
                                 <option value="FOLLOW_UP">Follow Up</option>
                                 <option value="WON">Won</option>
@@ -969,6 +1029,10 @@ function Dashboard() {
                           display: "flex",
                           gap: "8px",
                           flexWrap: "wrap",
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          updateStatus(lead.id, "ATTENDED");
                         }}
                       >
                         <a
