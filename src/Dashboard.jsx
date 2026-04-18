@@ -550,13 +550,16 @@ function Dashboard() {
         notes: b,
       };
 
-      const res = await fetch("https://forwardbackendserver-production.up.railway.app/add/notes", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const res = await fetch(
+        "https://forwardbackendserver-production.up.railway.app/add/notes",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
         },
-        body: JSON.stringify(payload),
-      });
+      );
     } catch (err) {
       console.error(err);
     }
@@ -576,13 +579,16 @@ function Dashboard() {
           secretKey: user.secretKey,
         };
 
-        const res = await fetch("https://forwardbackendserver-production.up.railway.app/get/leads/all", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+        const res = await fetch(
+          "https://forwardbackendserver-production.up.railway.app/get/leads/all",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
           },
-          body: JSON.stringify(payload),
-        });
+        );
 
         const data = await res.json();
 
@@ -679,13 +685,16 @@ function Dashboard() {
     };
 
     try {
-      const response = await fetch("https://forwardbackendserver-production.up.railway.app/add/leads", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        "https://forwardbackendserver-production.up.railway.app/add/leads",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newLead),
         },
-        body: JSON.stringify(newLead),
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`Failed to add lead (${response.status})`);
@@ -718,13 +727,16 @@ function Dashboard() {
         setBrandsError("");
 
         try {
-          const response = await fetch("https://forwardbackendserver-production.up.railway.app/get/all/brands", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
+          const response = await fetch(
+            "https://forwardbackendserver-production.up.railway.app/get/all/brands",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ secretKey: user.secretKey }),
             },
-            body: JSON.stringify({ secretKey: user.secretKey }),
-          });
+          );
 
           if (!response.ok) {
             throw new Error(`Failed to load brands (${response.status})`);
@@ -949,13 +961,12 @@ function Dashboard() {
                     <td>
                       {" "}
                       <div className="Field">
-                        <input
-                          type="text"
-                          placeholder="eg : call on Monday.... "
+                        <textarea
+                          placeholder="eg : call on Monday...."
+                          value={lead.notes || ""}
                           onChange={(e) => {
                             const newValue = e.target.value;
 
-                            // update UI immediately
                             setLeads((prev) =>
                               prev.map((l) =>
                                 l.id === lead.id
@@ -964,10 +975,16 @@ function Dashboard() {
                               ),
                             );
 
-                            // call backend
                             setLeadNotes(lead.id, newValue);
                           }}
-                          value={lead.notes}
+                          style={{
+                            width: "200px",
+                            minHeight: "60px",
+                            padding: "8px",
+                            borderRadius: "8px",
+                            border: "1px solid #d1d5db",
+                            resize: "vertical",
+                          }}
                         />
                       </div>
                     </td>
