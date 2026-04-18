@@ -949,26 +949,29 @@ function Dashboard() {
                     <td>
                       {" "}
                       <div className="Field">
-                        <input
-                          type="text"
-                          placeholder="eg : call on Monday.... "
-                          onChange={(e) => {
-                            const newValue = e.target.value;
+                        <textarea
+  placeholder="eg : call on Monday...."
+  value={lead.notes || ""}
+  onChange={(e) => {
+    const newValue = e.target.value;
 
-                            // update UI immediately
-                            setLeads((prev) =>
-                              prev.map((l) =>
-                                l.id === lead.id
-                                  ? { ...l, notes: newValue }
-                                  : l,
-                              ),
-                            );
+    setLeads((prev) =>
+      prev.map((l) =>
+        l.id === lead.id ? { ...l, notes: newValue } : l
+      )
+    );
 
-                            // call backend
-                            setLeadNotes(lead.id, newValue);
-                          }}
-                          value={lead.notes}
-                        />
+    setLeadNotes(lead.id, newValue);
+  }}
+  style={{
+    width: "200px",
+    minHeight: "60px",
+    padding: "8px",
+    borderRadius: "8px",
+    border: "1px solid #d1d5db",
+    resize: "vertical",
+  }}
+/>
                       </div>
                     </td>
                     <td>
