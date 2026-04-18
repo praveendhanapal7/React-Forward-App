@@ -52,7 +52,7 @@
 //           secretKey: user.secretKey,
 //         };
 
-//         const response = await fetch("http://localhost:8080/leads/all", {
+//         const response = await fetch("forwardbackendserver-production.up.railway.app/leads/all", {
 //           method: "POST",
 //           headers: {
 //             "Content-Type": "application/json",
@@ -91,7 +91,7 @@
 //       status:lead.status
 //     };
 
-//       fetch(`http://localhost:8080/leads/${lead.id}/status`, {
+//       fetch(`forwardbackendserver-production.up.railway.app/leads/${lead.id}/status`, {
 //   method: "PUT",
 //   headers: {
 //     "Content-Type": "application/json"
@@ -143,7 +143,7 @@
 
 //     //POSTING leads from backend
 //     try {
-//       const response = await fetch("http://localhost:8080/add/leads", {
+//       const response = await fetch("forwardbackendserver-production.up.railway.app/add/leads", {
 //         method: "POST",
 //         headers: {
 //           "Content-Type": "application/json",
@@ -181,7 +181,7 @@
 //         setBrandsError("");
 
 //         try {
-//           const response = await fetch("http://localhost:8080/all/brands", {
+//           const response = await fetch("forwardbackendserver-production.up.railway.app/all/brands", {
 //             method: "POST",
 //             headers: {
 //               "Content-Type": "application/json",
@@ -550,7 +550,7 @@ function Dashboard() {
         notes: b,
       };
 
-      const res = await fetch("http://localhost:8080/add/notes", {
+      const res = await fetch("forwardbackendserver-production.up.railway.app/add/notes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -576,7 +576,7 @@ function Dashboard() {
           secretKey: user.secretKey,
         };
 
-        const res = await fetch("http://localhost:8080/get/leads/all", {
+        const res = await fetch("forwardbackendserver-production.up.railway.app/get/leads/all", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -609,7 +609,7 @@ function Dashboard() {
       setUpdatingLeadId(leadId);
 
       const response = await fetch(
-        `http://localhost:8080/leads/${leadId}/status`,
+        `forwardbackendserver-production.up.railway.app/leads/${leadId}/status`,
         {
           method: "PUT",
           headers: {
@@ -679,7 +679,7 @@ function Dashboard() {
     };
 
     try {
-      const response = await fetch("http://localhost:8080/add/leads", {
+      const response = await fetch("forwardbackendserver-production.up.railway.app/add/leads", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -718,7 +718,7 @@ function Dashboard() {
         setBrandsError("");
 
         try {
-          const response = await fetch("http://localhost:8080/get/all/brands", {
+          const response = await fetch("forwardbackendserver-production.up.railway.app/get/all/brands", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
