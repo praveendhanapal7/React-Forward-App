@@ -44,6 +44,7 @@ function SignIn() {
 
       if (auth.ok && authSign) {
         localStorage.setItem("forward_auth_user", JSON.stringify(authSign));
+        
         navigate("/dashboard", { state: authSign });
       } else {
         setStatus(
