@@ -176,7 +176,7 @@ function Dashboard() {
       };
 
       const res = await fetch(
-        "https://forwardbackendserver-production.up.railway.app/add/notes",
+        "https://beautiful-exploration-production-6f7d.up.railway.app/add/notes",
         {
           method: "POST",
           headers: {
@@ -205,7 +205,7 @@ function Dashboard() {
         };
 
         const res = await fetch(
-          "https://forwardbackendserver-production.up.railway.app/get/leads/all",
+          "https://beautiful-exploration-production-6f7d.up.railway.app/get/leads/all",
           {
             method: "POST",
             headers: {
@@ -240,7 +240,7 @@ function Dashboard() {
       setUpdatingLeadId(leadId);
 
       const response = await fetch(
-        `https://forwardbackendserver-production.up.railway.app/leads/${leadId}/status`,
+        `https://beautiful-exploration-production-6f7d.up.railway.app/leads/${leadId}/status`,
         {
           method: "PUT",
           headers: {
@@ -311,7 +311,7 @@ function Dashboard() {
 
     try {
       const response = await fetch(
-        "https://forwardbackendserver-production.up.railway.app/add/leads",
+        "https://beautiful-exploration-production-6f7d.up.railway.app/add/leads",
         {
           method: "POST",
           headers: {
@@ -353,7 +353,7 @@ function Dashboard() {
 
         try {
           const response = await fetch(
-            "https://forwardbackendserver-production.up.railway.app/get/all/brands",
+            "https://beautiful-exploration-production-6f7d.up.railway.app/get/all/brands",
             {
               method: "POST",
               headers: {
