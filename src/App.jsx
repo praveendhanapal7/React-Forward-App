@@ -14,6 +14,8 @@ import GetStarted from "./GetStarted";
 import GetStartedDetails from "./GetStartedDetails";
 import Subscribe from "./Subscribe";
 import Contact from "./Contact";
+import ProtectedRoute from "./auth/ProtectedRoute";
+import GuestRoute from "./auth/GuestRoute";
 import "./App.css";
 
 function App() {
@@ -28,9 +30,30 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/blog/:slug" element={<BlogPost />} />
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route
+          path="/signin"
+          element={
+            <GuestRoute>
+              <SignIn />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <GuestRoute>
+              <SignUp />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/get-started" element={<GetStartedDetails />} />
         <Route path="/purchase" element={<GetStarted />} />
         <Route path="/subscribe" element={<Subscribe />} />

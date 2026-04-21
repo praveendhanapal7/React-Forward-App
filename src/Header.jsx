@@ -1,22 +1,14 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router";
 import { HiMenuAlt3, HiX } from "react-icons/hi";
 import logo from "/Images/forward-logo.png";
 import "./Header.css";
+import { useAuth } from "./auth/useAuth";
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
-
-  const auth = useMemo(() => {
-    const raw = localStorage.getItem("forward_auth_user");
-    if (!raw) return null;
-    try {
-      return JSON.parse(raw);
-    } catch {
-      return null;
-    }
-  }, []);
+  const { user, isAuthenticated, signOut } = useAuth();
 
   const navItems = [
     { label: "Home", path: "/" },
@@ -24,15 +16,16 @@ function Header() {
     { label: "Services", path: "/services" },
     { label: "About", path: "/about" },
     { label: "Blog", path: "/blog" },
-    { label: "Sign in", path: "/signin" },
     { label: "Contact", path: "/contact" },
-    ...(auth ? [{ label: "Dashboard", path: "/dashboard" }] : []),
+    ...(isAuthenticated
+      ? [{ label: "Dashboard", path: "/dashboard" }]
+      : [{ label: "Sign in", path: "/signin" }]),
   ];
 
   const handleSignOut = () => {
-    localStorage.removeItem("forward_auth_user");
-    navigate("/");
-    window.location.reload();
+    signOut();
+    setIsMenuOpen(false);
+    navigate("/", { replace: true });
   };
 
   return (
@@ -64,15 +57,29 @@ function Header() {
       </nav>
 
       <div className="ButtonsContainer">
+        {isAuthenticated ? (
+          <>
+            {user?.name ? (
+              <span className="HeaderUserGreeting">Hi, {user.name.split(" ")[0]}</span>
+            ) : null}
+            <button
+              type="button"
+              className="HeaderButton HeaderActionLink"
+              onClick={handleSignOut}
+            >
+              Sign Out
+            </button>
+          </>
+        ) : (
           <>
             <Link to="/signin" className="HeaderButton HeaderActionLink">
               Sign In
             </Link>
-
             <Link to="/signup" className="HeaderButton2 HeaderActionLink">
               Sign Up
             </Link>
           </>
+        )}
       </div>
 
       <button

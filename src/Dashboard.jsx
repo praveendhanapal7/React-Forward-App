@@ -1,13 +1,27 @@
-
-
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./Pages.css";
-import { Navigate, useLocation } from "react-router";
 import { HiOutlinePhone } from "react-icons/hi";
 import { FaWhatsapp } from "react-icons/fa";
+import { useAuth } from "./auth/useAuth";
+import { apiFetch, ApiError } from "./lib/api";
+
+const LEAD_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
+const NOTES_DEBOUNCE_MS = 500;
+
+const STATUS_ORDER = [
+  "NEW",
+  "ATTENDED",
+  "NO_RESPONSE",
+  "CALL_BACK",
+  "INTERESTED",
+  "FOLLOW_UP",
+  "WON",
+  "LOST",
+];
 
 function Dashboard() {
-  
+  const { user, isAgency, signOut } = useAuth();
+
   const formatPhoneLink = (phoneNumber) =>
     (phoneNumber || "").replace(/[^\d+]/g, "");
 
@@ -104,30 +118,10 @@ function Dashboard() {
     }
   };
 
-  const location = useLocation();
-
-  const user = useMemo(() => {
-    if (location.state) {
-      localStorage.setItem("forward_auth_user", JSON.stringify(location.state));
-      return location.state;
-    }
-
-    const storedUser = localStorage.getItem("forward_auth_user");
-    if (!storedUser) return null;
-
-    try {
-      return JSON.parse(storedUser);
-    } catch {
-      localStorage.removeItem("forward_auth_user");
-      return null;
-    }
-  }, [location.state]);
-
   const [leads, setLeads] = useState([]);
   const [clientName, setClientName] = useState("");
   const [loadingLeads, setLoadingLeads] = useState(true);
   const [leadNumber, setLeadNumber] = useState("");
-  // const [leadNotes, setLeadNotes] = useState("");
   const [link, setLink] = useState("");
   const [requirement, setRequirement] = useState("");
   const [status, setStatus] = useState("");
@@ -137,19 +131,17 @@ function Dashboard() {
   const [loadError, setLoadError] = useState("");
   const [brandsError, setBrandsError] = useState("");
 
-  const statusSummary = useMemo(() => {
-    const orderedStatuses = [
-      "NEW",
-      "ATTENDED",
-      "NO_RESPONSE",
-      "CALL_BACK",
-      "INTERESTED",
-      "FOLLOW_UP",
-      "WON",
-      "LOST",
-    ];
+  // Force a clean re-login if the in-memory auth session is missing
+  // the secretKey that the current backend still requires for protected calls.
+  // localStorage only persists the safe (non-secret) subset of the user.
+  useEffect(() => {
+    if (user && !user.secretKey) {
+      signOut();
+    }
+  }, [user, signOut]);
 
-    const counts = orderedStatuses.map((leadStatus) => {
+  const statusSummary = useMemo(() => {
+    const counts = STATUS_ORDER.map((leadStatus) => {
       const count = leads.filter((lead) => lead.status === leadStatus).length;
       return {
         status: leadStatus,
@@ -167,71 +159,83 @@ function Dashboard() {
     };
   }, [leads]);
 
-  //set Lead Notes By Id
-  const setLeadNotes = async (a, b) => {
-    try {
-      const payload = {
-        id: a,
-        notes: b,
-      };
+  const notesTimers = useRef(new Map());
 
-      const res = await fetch(
-        "https://beautiful-exploration-production-6f7d.up.railway.app/add/notes",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        },
-      );
+  const persistLeadNotes = useCallback(async (leadId, notes) => {
+    try {
+      await apiFetch("/add/notes", {
+        method: "POST",
+        body: { id: leadId, notes },
+      });
     } catch (err) {
-      console.error(err);
+      console.error("Failed to save notes:", err);
     }
-  };
+  }, []);
+
+  const scheduleNotesSave = useCallback(
+    (leadId, notes) => {
+      const timers = notesTimers.current;
+      if (timers.has(leadId)) {
+        clearTimeout(timers.get(leadId));
+      }
+      const handle = setTimeout(() => {
+        timers.delete(leadId);
+        persistLeadNotes(leadId, notes);
+      }, NOTES_DEBOUNCE_MS);
+      timers.set(leadId, handle);
+    },
+    [persistLeadNotes],
+  );
 
   useEffect(() => {
-    if (!user) {
+    const timers = notesTimers.current;
+    return () => {
+      timers.forEach((handle) => clearTimeout(handle));
+      timers.clear();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!user || !user.secretKey) {
       setLeads([]);
       setLoadingLeads(false);
-      return;
+      return undefined;
     }
+
+    let cancelled = false;
 
     const fetchLeads = async () => {
       try {
-        const payload = {
-          brandName: user.brandName,
-          secretKey: user.secretKey,
-        };
-
-        const res = await fetch(
-          "https://beautiful-exploration-production-6f7d.up.railway.app/get/leads/all",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
+        const data = await apiFetch("/get/leads/all", {
+          method: "POST",
+          body: {
+            brandName: user.brandName,
+            secretKey: user.secretKey,
           },
-        );
-
-        const data = await res.json();
-
+        });
+        if (cancelled) return;
         setLeads(Array.isArray(data) ? data : []);
+        setLoadError("");
       } catch (err) {
-        console.error(err);
+        if (cancelled) return;
+        console.error("Failed to load leads:", err);
+        setLoadError(
+          err instanceof ApiError
+            ? err.message
+            : "Unable to load leads right now.",
+        );
       } finally {
-        setLoadingLeads(false);
+        if (!cancelled) setLoadingLeads(false);
       }
     };
 
-    // first load
     fetchLeads();
+    const timer = setInterval(fetchLeads, LEAD_REFRESH_INTERVAL_MS);
 
-    // auto refresh every 5 min
-    const timer = setInterval(fetchLeads, 360000);
-
-    return () => clearInterval(timer);
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+    };
   }, [user]);
 
   const updateStatus = async (leadId, newStatus) => {
@@ -239,22 +243,10 @@ function Dashboard() {
       setStatus("");
       setUpdatingLeadId(leadId);
 
-      const response = await fetch(
-        `https://beautiful-exploration-production-6f7d.up.railway.app/leads/${leadId}/status`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ status: newStatus }),
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error(`Failed to update status (${response.status})`);
-      }
-
-      const updatedLead = await response.json();
+      const updatedLead = await apiFetch(`/leads/${leadId}/status`, {
+        method: "PUT",
+        body: { status: newStatus },
+      });
 
       setLeads((currentLeads) =>
         currentLeads.map((lead) =>
@@ -263,7 +255,11 @@ function Dashboard() {
       );
     } catch (error) {
       console.error("Failed to update lead status:", error);
-      setStatus("Unable to update lead status right now.");
+      setStatus(
+        error instanceof ApiError
+          ? error.message
+          : "Unable to update lead status right now.",
+      );
     } finally {
       setUpdatingLeadId(null);
     }
@@ -274,13 +270,9 @@ function Dashboard() {
     setStatus("");
     setEnquiryButton("Loading...");
 
-    let selectedClient = "";
-
-    if (user.secretKey === "forward@2025") {
-      selectedClient = clientName || brandnames[0];
-    } else {
-      selectedClient = user.brandName;
-    }
+    const selectedClient = isAgency
+      ? clientName || brandnames[0]
+      : user.brandName;
 
     if (!leadNumber.trim() || !requirement.trim()) {
       setStatus("Lead number and requirement are required.");
@@ -288,7 +280,7 @@ function Dashboard() {
       return;
     }
 
-    if (user.accountType === "Agency Staff" && !selectedClient) {
+    if (isAgency && !selectedClient) {
       setStatus("Select a client before adding a lead.");
       setEnquiryButton("Add Lead");
       return;
@@ -301,31 +293,16 @@ function Dashboard() {
       enquiryEntry: new Date().toLocaleString("en-IN", {
         timeZone: "Asia/Kolkata",
       }),
-      addedBy:
-        user.secretKey !== "forward@2025"
-          ? user.name
-          : `${user.name} (Agency Member)`,
+      addedBy: isAgency ? `${user.name} (Agency Member)` : user.name,
       status: "NEW",
       Link: link,
     };
 
     try {
-      const response = await fetch(
-        "https://beautiful-exploration-production-6f7d.up.railway.app/add/leads",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(newLead),
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error(`Failed to add lead (${response.status})`);
-      }
-
-      const savedLead = await response.json();
+      const savedLead = await apiFetch("/add/leads", {
+        method: "POST",
+        body: newLead,
+      });
 
       setLeads((currentLeads) => [savedLead, ...currentLeads]);
       setLeadNumber("");
@@ -335,53 +312,56 @@ function Dashboard() {
       setStatus("Lead entry added successfully.");
     } catch (error) {
       console.error("Failed to add lead:", error);
-      setStatus("Unable to add the lead right now. Please try again.");
+      setStatus(
+        error instanceof ApiError
+          ? error.message
+          : "Unable to add the lead right now. Please try again.",
+      );
     } finally {
       setEnquiryButton("Add Lead");
     }
   };
 
   useEffect(() => {
-    if (!user) {
+    if (!user || !user.secretKey) {
       setBrandnames([]);
       return;
     }
 
-    if (user.secretKey === "forward@2025") {
-      async function loadData() {
-        setBrandsError("");
+    if (!isAgency) return;
 
-        try {
-          const response = await fetch(
-            "https://beautiful-exploration-production-6f7d.up.railway.app/get/all/brands",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ secretKey: user.secretKey }),
-            },
-          );
+    let cancelled = false;
 
-          if (!response.ok) {
-            throw new Error(`Failed to load brands (${response.status})`);
-          }
-
-          const brands = await response.json();
-          setBrandnames(Array.isArray(brands) ? brands : []);
-        } catch (error) {
-          console.error("Error loading data:", error);
-          setBrandnames([]);
-          setBrandsError("Unable to load client names right now.");
-        }
+    async function loadData() {
+      setBrandsError("");
+      try {
+        const brands = await apiFetch("/get/all/brands", {
+          method: "POST",
+          body: { secretKey: user.secretKey },
+        });
+        if (cancelled) return;
+        setBrandnames(Array.isArray(brands) ? brands : []);
+      } catch (error) {
+        if (cancelled) return;
+        console.error("Error loading brand list:", error);
+        setBrandnames([]);
+        setBrandsError(
+          error instanceof ApiError
+            ? error.message
+            : "Unable to load client names right now.",
+        );
       }
-
-      loadData();
     }
-  }, [user]);
 
-  if (!user) {
-    return <Navigate to="/signin" replace />;
+    loadData();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user, isAgency]);
+
+  if (!user || !user.secretKey) {
+    return null;
   }
 
   return (
@@ -394,7 +374,7 @@ function Dashboard() {
         >
           Hii {user.name}
           <span style={{ fontSize: "15px", opacity: "70%" }}>
-            {` (Team of ${user.brandName})`}
+            {user.brandName ? ` (Team of ${user.brandName})` : ""}
           </span>
         </h2>
 
@@ -448,14 +428,12 @@ function Dashboard() {
               />
             </div>
 
-            {user.accountType === "Agency Staff" && (
+            {isAgency && (
               <div className="Field" style={{ width: "300px" }}>
                 <label>Client Name</label>
 
                 <select
-                  onChange={(e) => {
-                    setClientName(e.target.value);
-                  }}
+                  onChange={(e) => setClientName(e.target.value)}
                   value={clientName}
                 >
                   {brandnames.length === 0 && <option>Loading...</option>}
@@ -467,7 +445,7 @@ function Dashboard() {
                 </select>
 
                 {brandsError ? (
-                  <p className="MutedText">{brandsError}</p>
+                  <p className="FieldError">{brandsError}</p>
                 ) : null}
               </div>
             )}
@@ -551,7 +529,7 @@ function Dashboard() {
                   <th>Lead Number</th>
                   <th>Requirement</th>
                   <th>Link</th>
-                  {user.accountType === "Agency Staff" && <th>Brand Name</th>}
+                  {isAgency && <th>Brand Name</th>}
                   <th>Added By</th>
                   <th>Entry Time</th>
                   <th>Notes</th>
@@ -571,6 +549,7 @@ function Dashboard() {
                           href={lead.Link}
                           style={{ textDecoration: "none", color: "#055cce" }}
                           target="_blank"
+                          rel="noreferrer"
                         >
                           Client Link
                         </a>
@@ -578,13 +557,10 @@ function Dashboard() {
                         <p>Link not provided.</p>
                       )}
                     </td>
-                    {user.accountType === "Agency Staff" && (
-                      <td>{lead.clientName}</td>
-                    )}
+                    {isAgency && <td>{lead.clientName}</td>}
                     <td>{lead.addedBy}</td>
                     <td>{lead.enquiryEntry}</td>
                     <td>
-                      {" "}
                       <div className="Field">
                         <textarea
                           placeholder="eg : call on Monday...."
@@ -600,7 +576,7 @@ function Dashboard() {
                               ),
                             );
 
-                            setLeadNotes(lead.id, newValue);
+                            scheduleNotesSave(lead.id, newValue);
                           }}
                           style={{
                             width: "200px",
