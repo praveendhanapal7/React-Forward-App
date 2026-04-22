@@ -4,6 +4,22 @@ const DEFAULT_API_BASE_URL =
 export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL;
 
+export const AUTH_UNAUTHORIZED_EVENT = "auth:unauthorized";
+
+let currentToken = null;
+
+export function setAuthToken(token) {
+  currentToken = typeof token === "string" && token.length > 0 ? token : null;
+}
+
+export function clearAuthToken() {
+  currentToken = null;
+}
+
+export function getAuthToken() {
+  return currentToken;
+}
+
 export class ApiError extends Error {
   constructor(message, status, data) {
     super(message);
@@ -24,7 +40,7 @@ async function parseBody(response) {
 }
 
 export async function apiFetch(path, options = {}) {
-  const { body, headers, method = "GET", ...rest } = options;
+  const { body, headers, method = "GET", skipAuth = false, ...rest } = options;
 
   const url = path.startsWith("http")
     ? path
@@ -35,6 +51,9 @@ export async function apiFetch(path, options = {}) {
     headers: {
       Accept: "application/json",
       ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
+      ...(!skipAuth && currentToken
+        ? { Authorization: `Bearer ${currentToken}` }
+        : {}),
       ...(headers || {}),
     },
     ...rest,
@@ -58,6 +77,12 @@ export async function apiFetch(path, options = {}) {
   const data = await parseBody(response);
 
   if (!response.ok) {
+    if (response.status === 401 && !skipAuth) {
+      clearAuthToken();
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent(AUTH_UNAUTHORIZED_EVENT));
+      }
+    }
     const message =
       (data && typeof data === "object" && data.message) ||
       (typeof data === "string" && data) ||

@@ -20,7 +20,7 @@ const STATUS_ORDER = [
 ];
 
 function Dashboard() {
-  const { user, isAgency, signOut } = useAuth();
+  const { user, isAgency } = useAuth();
 
   const formatPhoneLink = (phoneNumber) =>
     (phoneNumber || "").replace(/[^\d+]/g, "");
@@ -131,15 +131,6 @@ function Dashboard() {
   const [loadError, setLoadError] = useState("");
   const [brandsError, setBrandsError] = useState("");
 
-  // Force a clean re-login if the in-memory auth session is missing
-  // the secretKey that the current backend still requires for protected calls.
-  // localStorage only persists the safe (non-secret) subset of the user.
-  useEffect(() => {
-    if (user && !user.secretKey) {
-      signOut();
-    }
-  }, [user, signOut]);
-
   const statusSummary = useMemo(() => {
     const counts = STATUS_ORDER.map((leadStatus) => {
       const count = leads.filter((lead) => lead.status === leadStatus).length;
@@ -196,7 +187,7 @@ function Dashboard() {
   }, []);
 
   useEffect(() => {
-    if (!user || !user.secretKey) {
+    if (!user) {
       setLeads([]);
       setLoadingLeads(false);
       return undefined;
@@ -206,13 +197,7 @@ function Dashboard() {
 
     const fetchLeads = async () => {
       try {
-        const data = await apiFetch("/get/leads/all", {
-          method: "POST",
-          body: {
-            brandName: user.brandName,
-            secretKey: user.secretKey,
-          },
-        });
+        const data = await apiFetch("/get/leads/all", { method: "GET" });
         if (cancelled) return;
         setLeads(Array.isArray(data) ? data : []);
         setLoadError("");
@@ -293,7 +278,6 @@ function Dashboard() {
       enquiryEntry: new Date().toLocaleString("en-IN", {
         timeZone: "Asia/Kolkata",
       }),
-      addedBy: isAgency ? `${user.name} (Agency Member)` : user.name,
       status: "NEW",
       Link: link,
     };
@@ -323,7 +307,7 @@ function Dashboard() {
   };
 
   useEffect(() => {
-    if (!user || !user.secretKey) {
+    if (!user) {
       setBrandnames([]);
       return;
     }
@@ -335,10 +319,7 @@ function Dashboard() {
     async function loadData() {
       setBrandsError("");
       try {
-        const brands = await apiFetch("/get/all/brands", {
-          method: "POST",
-          body: { secretKey: user.secretKey },
-        });
+        const brands = await apiFetch("/get/all/brands", { method: "GET" });
         if (cancelled) return;
         setBrandnames(Array.isArray(brands) ? brands : []);
       } catch (error) {
@@ -360,7 +341,7 @@ function Dashboard() {
     };
   }, [user, isAgency]);
 
-  if (!user || !user.secretKey) {
+  if (!user) {
     return null;
   }
 
