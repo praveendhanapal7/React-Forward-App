@@ -44,6 +44,84 @@
   font-size: 30px;
 }
 
+.LeadEntriesHeader {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.LeadFiltersRow {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.LeadFilterWrap {
+  display: grid;
+  gap: 6px;
+  min-width: 220px;
+}
+
+.LeadFilterWrap label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #4b5563;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.LeadFilterLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.LeadFilterLabel svg {
+  font-size: 15px;
+  color: #ce050d;
+}
+
+.LeadFilterWrap select {
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid #dbc9c9;
+  padding: 0 12px;
+  font-size: 14px;
+  background: #fff;
+}
+
+.LeadFilterWrap select:focus {
+  outline: none;
+  border-color: #ce050d;
+}
+
+.LeadDateRangeWrap {
+  min-width: 300px;
+}
+
+.LeadDateRangeInputs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.LeadDateRangeInputs input {
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid #dbc9c9;
+  padding: 0 12px;
+  font-size: 14px;
+  background: #fff;
+}
+
+.LeadDateRangeInputs input:focus {
+  outline: none;
+  border-color: #ce050d;
+}
+
 .NarrativeBlock {
   display: grid;
   gap: 12px;
@@ -253,8 +331,8 @@
 
 .DashboardTopGrid {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.75fr);
-  gap: 18px;
+  grid-template-columns: minmax(0, 1.02fr) minmax(460px, 1.08fr);
+  gap: 22px;
   align-items: start;
 }
 
@@ -265,14 +343,15 @@
 .StatusGraphCard {
   min-height: 100%;
   background: linear-gradient(180deg, #fffafa 0%, #ffffff 100%);
+  padding: 28px 30px 26px;
 }
 
 .StatusGraphHead {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 18px;
+  gap: 16px;
+  margin-bottom: 22px;
 }
 
 .StatusGraphHead h3 {
@@ -280,17 +359,18 @@
 }
 
 .StatusGraphTotal {
-  min-width: 94px;
-  padding: 10px 12px;
-  border-radius: 14px;
-  background: #fff;
+  min-width: 126px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffffff 0%, #fff7f7 100%);
   border: 1px solid #f0dede;
   text-align: center;
+  box-shadow: 0 10px 24px rgba(206, 5, 13, 0.08);
 }
 
 .StatusGraphTotal span {
   display: block;
-  font-size: 26px;
+  font-size: 38px;
   font-weight: 700;
   line-height: 1;
   color: #ce050d;
@@ -298,8 +378,8 @@
 
 .StatusGraphTotal small {
   display: block;
-  margin-top: 4px;
-  font-size: 12px;
+  margin-top: 6px;
+  font-size: 14px;
   color: #666;
 }
 
@@ -558,4 +638,93 @@
 .LeadTable th {
   color: #ce050d;
   font-weight: 700;
+}
+
+
+.StatusGraphCard {
+  min-height: 100%;
+  background: radial-gradient(circle at top right, rgba(206, 5, 13, 0.08), transparent 30%),
+    linear-gradient(180deg, #fffafa 0%, #ffffff 100%);
+  display: flex;
+  flex-direction: column;
+  padding: 28px 30px 26px;
+  border: 1px solid rgba(206, 5, 13, 0.18);
+  box-shadow: 0 18px 44px rgba(206, 5, 13, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.7) inset;
+}
+
+.StatusDonutWrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 440px;
+  padding: 18px 18px 8px;
+}
+
+.StatusDonutSvg {
+  width: 100%;
+  max-width: 680px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  overflow: visible;
+  filter: drop-shadow(0 16px 34px rgba(64, 92, 136, 0.14));
+}
+
+.StatusDonutConnector {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.92;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.8));
+}
+
+.StatusDonutLabel {
+  font-size: 18px;
+  font-weight: 700;
+  fill: #222222;
+  paint-order: stroke;
+  stroke: rgba(255, 255, 255, 0.92);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+
+.StatusDonutMeta {
+  font-size: 14px;
+  font-weight: 500;
+  fill: #6b7280;
+  paint-order: stroke;
+  stroke: rgba(255, 255, 255, 0.92);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+.StatusDonutCenterValue {
+  font-size: 52px;
+  font-weight: 700;
+  fill: #ce050d;
+  text-anchor: middle;
+  filter: drop-shadow(0 0 10px rgba(206, 5, 13, 0.16));
+}
+
+.StatusDonutCenterLabel {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  fill: #6b7280;
+  text-anchor: middle;
+}
+
+.StatusGraphEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 260px;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #6b7280;
+  padding: 12px;
 }

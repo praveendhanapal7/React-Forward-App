@@ -1,5 +1,5 @@
 const DEFAULT_API_BASE_URL =
-  "https://beautiful-exploration-production-6f7d.up.railway.app";
+  "https://forwardbackendserver-production-da6a.up.railway.app/";
 
 export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL;
